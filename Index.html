@@ -1,0 +1,2484 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ប្រព័ន្ធគ្រប់គ្រងហាង - Heang Kimhay Retail Shop</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#10b981', // Emerald Green
+                        secondary: '#0f172a', // Dark Slate
+                    },
+                    fontFamily: {
+                        khmer: ['Noto Sans Khmer', 'Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts for Khmer & English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Khmer:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans Khmer', 'Inter', sans-serif;
+            line-height: 1.6; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* លាក់ Scrollbar សម្រាប់ស្ទីល App */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* ស្ទីលសម្រាប់បោះពុម្ពសន្លឹករបាយការណ៍ផ្លូវការ (Print-specific stylesheet) */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #report-printable-area, #report-printable-area * {
+                visibility: visible;
+            }
+            #report-printable-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+                box-shadow: none !important;
+                border: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col h-screen overflow-hidden select-none">
+
+    <!-- ក្បាលទំព័រ App (App Header) -->
+    <header class="bg-secondary text-white px-4 py-3 flex items-center justify-between shadow-md shrink-0">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-bold text-white shadow-sm">
+                🏪
+            </div>
+            <div>
+                <h1 class="text-sm font-bold leading-tight">Heang Kimhay Retail Shop</h1>
+                <p class="text-[10px] text-gray-400">គណនី៖ ចាន់ នី (បុគ្គលិកគិតលុយ)</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="flex h-2.5 w-2.5 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            </span>
+            <span class="text-xs text-emerald-400 font-medium">ម៉ាស៊ីនមេដើរ</span>
+        </div>
+    </header>
+
+    <!-- តួខ្លួន App (App Body Container) -->
+    <main class="flex-1 overflow-y-auto no-scrollbar pb-20 relative">
+        
+        <!-- ------------------- ទំព័រទី ១៖ POS លក់ទំនិញ (TAB: pos) ------------------- -->
+        <div id="view-pos" class="app-view p-3 space-y-4">
+            <!-- ស្វែងរក និង ប្រភេទក្រុម -->
+            <div class="space-y-2">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input type="text" id="pos-search" oninput="filterProducts()" class="w-full pl-9 pr-4 py-2 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm" placeholder="ស្វែងរកទំនិញតាមឈ្មោះ ឬបាកូដ...">
+                </div>
+                
+                <!-- តម្រងប្រភេទក្រុមទំនិញ -->
+                <div class="flex gap-2 overflow-x-auto no-scrollbar py-1" id="category-bar">
+                    <button onclick="selectCategory('all')" class="cat-btn shrink-0 px-4 py-1.5 text-xs font-medium rounded-full bg-primary text-white shadow-sm transition">ទាំងអស់</button>
+                    <button onclick="selectCategory('1')" class="cat-btn shrink-0 px-4 py-1.5 text-xs font-medium rounded-full bg-white text-gray-600 border border-gray-200 transition">ភេសជ្ជៈ</button>
+                    <button onclick="selectCategory('2')" class="cat-btn shrink-0 px-4 py-1.5 text-xs font-medium rounded-full bg-white text-gray-600 border border-gray-200 transition">គ្រឿងទេស</button>
+                    <button onclick="selectCategory('3')" class="cat-btn shrink-0 px-4 py-1.5 text-xs font-medium rounded-full bg-white text-gray-600 border border-gray-200 transition">របស់ប្រើប្រាស់</button>
+                </div>
+            </div>
+
+            <!-- បញ្ជីផលិតផលលក់ -->
+            <div>
+                <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">បញ្ជីផលិតផល</h2>
+                <div class="grid grid-cols-2 gap-3" id="pos-products-grid">
+                    <!-- ផលិតផលនឹងត្រូវទាញបញ្ចូលដោយ JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ------------------- ទំព័រទី ២៖ គ្រប់គ្រងស្តុក (TAB: stock) ------------------- -->
+        <div id="view-stock" class="app-view p-3 space-y-4 hidden">
+            <div class="flex flex-col gap-2">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-base font-bold text-secondary">ឃ្លាំងស្តុកទំនិញបច្ចុប្បន្ន</h2>
+                    <span class="text-xs bg-orange-100 text-orange-700 font-semibold px-2 py-1 rounded" id="low-stock-count">ស្តុកទាប៖ ០</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="openNewProductModal()" class="flex-1 bg-primary text-white text-[10px] font-semibold py-2.5 rounded-xl shadow-sm flex items-center justify-center gap-1 active:scale-95 transition">
+                        ➕ បន្ថែមទំនិញ
+                    </button>
+                    <button onclick="openBulkPriceModal()" class="flex-1 bg-blue-600 text-white text-[10px] font-semibold py-2.5 rounded-xl shadow-sm flex items-center justify-center gap-1 active:scale-95 transition">
+                        🏷️ កែតម្លៃកញ្ចប់
+                    </button>
+                </div>
+            </div>
+
+            <!-- ស្វែងរកក្នុងស្តុក -->
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </span>
+                <input type="text" id="stock-search" oninput="filterStockProducts()" class="w-full pl-9 pr-4 py-2 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none" placeholder="ស្វែងរកទំនិញក្នុងស្តុក...">
+            </div>
+
+            <!-- បញ្ជីទំនិញក្នុងស្តុក -->
+            <div class="space-y-2.5" id="stock-products-list">
+                <!-- បញ្ជីស្តុកទំនិញនឹងត្រូវទាញបញ្ចូលដោយ JS -->
+            </div>
+        </div>
+
+        <!-- ------------------- ទំព័រទី ៣៖ របាយការណ៍ (TAB: reports) ------------------- -->
+        <div id="view-reports" class="app-view p-3 space-y-4 hidden">
+            <h2 class="text-base font-bold text-secondary">របាយការណ៍លក់ថ្ងៃនេះ</h2>
+            
+            <!-- កាតសង្ខេបចំណូល -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-3.5 rounded-2xl shadow-sm">
+                    <p class="text-[10px] text-emerald-100 uppercase">លក់បានសរុប</p>
+                    <p class="text-xl font-bold mt-1" id="report-sales-total">$0.00</p>
+                    <p class="text-[9px] text-emerald-200 mt-2" id="report-sales-count">ចំនួនលក់៖ ០ ដង</p>
+                </div>
+                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-3.5 rounded-2xl shadow-sm">
+                    <p class="text-[10px] text-blue-100 uppercase">ចំណេញដុលសរុប</p>
+                    <p class="text-xl font-bold mt-1" id="report-profit-total">$0.00</p>
+                    <p class="text-[9px] text-blue-200 mt-2" id="report-profit-rate">ភាគរយចំណេញ៖ ០%</p>
+                </div>
+            </div>
+
+            <!-- ក្រាហ្វិកគំនូសប្លង់សាមញ្ញ (Pure-CSS Charts) -->
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+                <h3 class="text-xs font-bold text-gray-500">ចំណូលតាមប្រភេទការទូទាត់</h3>
+                <div class="space-y-2" id="payment-chart-container">
+                    <!-- Dynamic Progress bars -->
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+                <h3 class="text-xs font-bold text-gray-500">ទំនិញលក់ដាច់បំផុត</h3>
+                <div class="space-y-2" id="top-selling-list">
+                    <!-- Top selling progress bars -->
+                </div>
+            </div>
+
+            <!-- ផ្នែកទាញរបាយការណ៍ផ្លូវការជាសន្លឹក -->
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">📄 បង្កើតសន្លឹករបាយការណ៍ផ្លូវការ</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[10px] text-gray-400 font-bold block mb-1">ប្រភេទរបាយការណ៍</label>
+                        <select id="report-sheet-type" onchange="toggleReportDateFields()" class="w-full text-xs border border-gray-200 rounded-xl px-3 py-2.5 outline-none bg-white">
+                            <option value="sales">របាយការណ៍លក់រួម (Combined Sales Report)</option>
+                            <option value="stock">របាយការណ៍ស្តុកទំនិញបច្ចុប្បន្ន (Current Stock Report)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="report-date-fields" class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[10px] text-gray-400 font-bold block mb-1">ចាប់ពីថ្ងៃ</label>
+                            <input type="date" id="report-from-date" class="w-full text-xs border border-gray-200 rounded-xl px-3 py-2 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-gray-400 font-bold block mb-1">ដល់ថ្ងៃ</label>
+                            <input type="date" id="report-to-date" class="w-full text-xs border border-gray-200 rounded-xl px-3 py-2 outline-none">
+                        </div>
+                    </div>
+                    
+                    <button onclick="generateOfficialReportSheet()" class="w-full bg-secondary hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs shadow-sm flex items-center justify-center gap-1.5 active:scale-95 transition">
+                        📊 បង្កើតសន្លឹករបាយការណ៍ (Generate Sheet)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ------------------- ទំព័រទី ៤៖ អតិថិជន (TAB: customers) ------------------- -->
+        <div id="view-customers" class="app-view p-3 space-y-4 hidden">
+            <div class="flex items-center justify-between">
+                <h2 class="text-base font-bold text-secondary">សមាជិក / អតិថិជន</h2>
+                <button onclick="toggleNewCustomerModal(true)" class="bg-primary text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1 active:scale-95 transition">
+                    ➕ បន្ថែមថ្មី
+                </button>
+            </div>
+
+            <!-- ស្វែងរកអតិថិជន -->
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </span>
+                <input type="text" id="customer-search" oninput="filterCustomersList()" class="w-full pl-9 pr-4 py-2 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none" placeholder="ស្វែងរកលេខទូរស័ព្ទ ឬឈ្មោះ...">
+            </div>
+
+            <!-- បញ្ជីអតិថិជន -->
+            <div class="space-y-2.5" id="customers-display-list">
+                <!-- បញ្ជីឈ្មោះនឹងត្រូវទាញបញ្ចូលដោយ JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ------------------- Floating Cart Bar ------------------- -->
+    <div id="floating-cart-bar" onclick="toggleCartModal(true)" class="fixed bottom-[64px] left-3 right-3 bg-secondary text-white p-3 rounded-2xl shadow-xl flex items-center justify-between transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 z-30 active:scale-98">
+        <div class="flex items-center gap-3">
+            <div class="relative bg-primary p-2 rounded-xl">
+                🛒
+                <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border border-secondary" id="cart-badge-count">0</span>
+            </div>
+            <div>
+                <p class="text-xs text-gray-400">ទំនិញក្នុងកន្ត្រក</p>
+                <p class="text-sm font-bold" id="cart-total-preview">$0.00</p>
+            </div>
+        </div>
+        <button class="bg-primary hover:bg-emerald-600 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow">
+            ពិនិត្យកន្ត្រក ➔
+        </button>
+    </div>
+
+    <!-- ------------------- Bottom Navigation Bar ------------------- -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around py-2 shadow-2xl shrink-0 z-40">
+        <button onclick="switchTab('pos')" id="nav-pos" class="nav-item flex flex-col items-center gap-1 text-primary">
+            <div class="text-lg">🛒</div>
+            <span class="text-[10px] font-medium">លក់ (POS)</span>
+        </button>
+        <button onclick="switchTab('stock')" id="nav-stock" class="nav-item flex flex-col items-center gap-1 text-gray-400">
+            <div class="text-lg">📦</div>
+            <span class="text-[10px] font-medium">ស្តុក</span>
+        </button>
+        <button onclick="switchTab('reports')" id="nav-reports" class="nav-item flex flex-col items-center gap-1 text-gray-400">
+            <div class="text-lg">📊</div>
+            <span class="text-[10px] font-medium">របាយការណ៍</span>
+        </button>
+        <button onclick="switchTab('customers')" id="nav-customers" class="nav-item flex flex-col items-center gap-1 text-gray-400">
+            <div class="text-lg">👥</div>
+            <span class="text-[10px] font-medium">សមាជិក</span>
+        </button>
+    </nav>
+
+    <!-- ==================== Modals Section ==================== -->
+
+    <!-- ១. Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
+        <div class="w-full bg-white rounded-t-[2rem] max-h-[85vh] flex flex-col transform translate-y-full transition-transform duration-300" id="cart-modal-content">
+            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">🛒</span>
+                    <h3 class="text-sm font-bold text-secondary">កន្ត្រកទំនិញរបស់អ្នក</h3>
+                </div>
+                <button onclick="toggleCartModal(false)" class="text-gray-400 hover:text-gray-600 text-xl p-1">✕</button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 space-y-3" id="cart-items-list">
+                <!-- Loaded by JS -->
+            </div>
+
+            <div class="px-4 py-2 bg-gray-50 border-t border-gray-100 flex items-center justify-between gap-2 shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm">👤</span>
+                    <select id="checkout-customer-select" onchange="applyCustomerDiscount()" class="text-xs bg-white border border-gray-200 rounded px-2 py-1 max-w-[150px] outline-none">
+                        <option value="">-- ជ្រើសរើសសមាជិក --</option>
+                    </select>
+                </div>
+                <div class="text-right">
+                    <span class="text-[10px] text-gray-500" id="customer-points-preview">គ្មានការបញ្ចុះតម្លៃ</span>
+                </div>
+            </div>
+
+            <div class="p-4 bg-gray-50 border-t border-gray-100 space-y-4 shrink-0">
+                <div class="space-y-1.5 text-xs">
+                    <div class="flex justify-between text-gray-500">
+                        <span>សរុបដើម៖</span>
+                        <span id="checkout-subtotal">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-red-500">
+                        <span>បញ្ចុះតម្លៃ (សមាជិក)៖</span>
+                        <span id="checkout-discount">-$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-base font-bold text-secondary">
+                        <span>សរុបចុងក្រោយ៖</span>
+                        <span id="checkout-final" class="text-primary">$0.00</span>
+                    </div>
+                </div>
+
+                <button onclick="showDraftPreview()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-2xl shadow-md active:scale-95 transition text-xs flex items-center justify-center gap-1.5">
+                    📄 បើកសន្លឹកពង្រាងវិក្កយបត្រ (ផ្ទៀងផ្ទាត់) ➔
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ២. Draft Modal -->
+    <div id="draft-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm max-h-[85vh] flex flex-col overflow-hidden transform scale-90 transition-transform duration-300" id="draft-modal-content">
+            <div class="overflow-y-auto p-5 space-y-4" id="draft-paper">
+                <!-- Loaded by JS -->
+            </div>
+            <div class="p-4 bg-gray-50 border-t border-gray-100 flex gap-3 shrink-0">
+                <button onclick="toggleDraftModal(false)" class="flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-xl text-xs active:scale-95 transition">
+                    ↩️ ត្រលប់ក្រោយ
+                </button>
+                <button onclick="openPaymentModal()" class="flex-1 bg-primary text-white font-bold py-3 rounded-xl text-xs shadow-md active:scale-95 transition">
+                    💵 ទទួលប្រាក់ ➔
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ៣. Payment Modal -->
+    <div id="payment-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end sm:items-center justify-center">
+        <div class="w-full sm:max-w-md bg-white rounded-t-[2rem] sm:rounded-3xl max-h-[90vh] flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-90 transition-all duration-300" id="payment-modal-content">
+            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">💰</span>
+                    <h3 class="text-sm font-bold text-secondary">ផ្ទាំងទទួលប្រាក់ (Payment Portal)</h3>
+                </div>
+                <button onclick="togglePaymentModal(false)" class="text-gray-400 hover:text-gray-600 text-xl p-1">✕</button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-5 space-y-4 no-scrollbar">
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-4 rounded-2xl shadow-inner text-center space-y-1">
+                    <p class="text-[10px] text-slate-400 uppercase tracking-wider">ទឹកប្រាក់សរុបត្រូវបង់</p>
+                    <div class="flex justify-center items-baseline gap-2">
+                        <span class="text-2xl font-extrabold text-emerald-400" id="pay-total-usd">$0.00</span>
+                        <span class="text-slate-400">/</span>
+                        <span class="text-lg font-bold text-amber-400" id="pay-total-khr">0 ៛</span>
+                    </div>
+                    <p class="text-[9px] text-slate-500">អត្រាប្ដូរប្រាក់របស់ហាង៖ 1$ = 4,100 ៛</p>
+                </div>
+
+                <div class="space-y-2">
+                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wide">ជ្រើសរើសមធ្យោបាយទូទាត់៖</p>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="selectPaymentMethod('Cash')" id="pay-btn-cash" class="border-2 border-primary bg-emerald-50/50 text-secondary rounded-xl p-2.5 flex flex-col items-center gap-1 transition">
+                            <span class="text-lg">💵</span>
+                            <span class="text-[10px] font-bold">លុយសុទ្ធ</span>
+                        </button>
+                        <button onclick="selectPaymentMethod('KHQR')" id="pay-btn-khqr" class="border-2 border-gray-100 bg-white text-secondary rounded-xl p-2.5 flex flex-col items-center gap-1 transition">
+                            <span class="text-lg">📲</span>
+                            <span class="text-[10px] font-bold">KHQR</span>
+                        </button>
+                        <button onclick="selectPaymentMethod('Card')" id="pay-btn-card" class="border-2 border-gray-100 bg-white text-secondary rounded-xl p-2.5 flex flex-col items-center gap-1 transition">
+                            <span class="text-lg">💳</span>
+                            <span class="text-[10px] font-bold">កាត</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="payment-cash-section" class="space-y-4">
+                    <div class="bg-gray-50 p-3 rounded-2xl border border-gray-100 space-y-2">
+                        <p class="text-[10px] font-bold text-gray-500 uppercase">ប្រភេទរូបិយប័ណ្ណទទួល៖</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-xl py-2 cursor-pointer active:bg-gray-100">
+                                <input type="radio" name="cash_currency" value="USD" checked onchange="toggleCashCurrency('USD')" class="accent-primary">
+                                <span class="text-xs font-bold text-gray-700">🇺🇸 ដុល្លារ ($)</span>
+                            </label>
+                            <label class="flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-xl py-2 cursor-pointer active:bg-gray-100">
+                                <input type="radio" name="cash_currency" value="KHR" onchange="toggleCashCurrency('KHR')" class="accent-primary">
+                                <span class="text-xs font-bold text-gray-700">🇰🇭 រៀល (៛)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-gray-500 font-bold uppercase" id="received-label">ប្រាក់ទទួលបាន ($) *</label>
+                            <input type="number" id="cash-received-input" oninput="calculateCambodianChange()" step="0.01" class="w-full px-3 py-2.5 text-sm font-extrabold border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-center" placeholder="0.00">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-gray-500 font-bold uppercase">ប្រាក់អាប់ត្រូវសងវិញ</label>
+                            <div class="bg-gray-100 py-2 rounded-xl text-center flex flex-col justify-center min-h-[46px] border border-gray-200">
+                                <p class="text-xs font-extrabold text-red-600 leading-tight" id="cash-change-usd">$0.00</p>
+                                <p class="text-[10px] font-bold text-slate-500 leading-none" id="cash-change-khr">0 ៛</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <p class="text-[9px] font-bold text-gray-400 uppercase">ប៊ូតុងលុយរហ័ស (Quick Cash)៖</p>
+                        <div class="flex gap-1.5 overflow-x-auto no-scrollbar" id="quick-cash-container">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="payment-khqr-section" class="hidden flex flex-col items-center justify-center p-4 border border-dashed border-red-200 bg-red-50/20 rounded-2xl space-y-3">
+                    <div class="w-32 h-32 bg-white border-4 border-red-500 rounded-2xl flex items-center justify-center p-1.5 relative shadow-md">
+                        <div class="w-full h-full bg-slate-900 flex items-center justify-center text-white text-[9px] text-center font-mono rounded">
+                            KHQR MOCKUP
+                        </div>
+                        <div class="absolute w-7 h-7 bg-red-600 border border-white rounded-md flex items-center justify-center text-[10px] font-bold text-white shadow">
+                            KH
+                        </div>
+                    </div>
+                    <div class="text-center space-y-1">
+                        <p class="text-xs font-bold text-slate-800">ស្កេនទូទាត់ប្រាក់តាម KHQR</p>
+                        <p class="text-[10px] text-gray-400">ទឹកប្រាក់សរុប៖ <span class="text-primary font-bold" id="khqr-total-display">$0.00 / 0 ៛</span></p>
+                    </div>
+                </div>
+
+                <div id="payment-card-section" class="hidden p-4 border border-dashed border-blue-200 bg-blue-50/20 rounded-2xl flex items-center gap-3">
+                    <div class="text-2xl">💳</div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-800">សូមឆូតកាត ឬ ប៉ះកាត (Tap/Swipe)</p>
+                        <p class="text-[10px] text-gray-400">សូមដំណើរការលើម៉ាស៊ីន POS Terminal ខាងក្រៅ។</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-gray-50 border-t border-gray-100 shrink-0">
+                <button onclick="submitFinalCheckout()" class="w-full bg-primary hover:bg-emerald-600 text-white font-extrabold py-3.5 rounded-2xl shadow-lg active:scale-95 transition text-sm flex items-center justify-center gap-2">
+                    ✅ បញ្ជាក់ការបង់ប្រាក់ & ចេញវិក្កយបត្រ ➔
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ៤. Receipt Modal -->
+    <div id="receipt-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm max-h-[85vh] flex flex-col overflow-hidden transform scale-90 transition-transform duration-300" id="receipt-modal-content">
+            <div class="overflow-y-auto p-5 space-y-4" id="receipt-paper">
+                <!-- Loaded by JS -->
+            </div>
+            <div class="p-4 bg-gray-50 border-t border-gray-100 flex gap-2">
+                <button onclick="closeReceiptModal()" class="flex-1 bg-gray-200 text-gray-700 font-bold py-2.5 rounded-xl text-xs active:scale-95 transition">
+                    បិទផ្ទាំង
+                </button>
+                <button onclick="simulatePrint()" class="flex-1 bg-primary text-white font-bold py-2.5 rounded-xl text-xs active:scale-95 transition flex items-center justify-center gap-1">
+                    🖨️ បោះពុម្ព
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ៥. Stock Audit & History Modal -->
+    <div id="stock-edit-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-5 space-y-4 transform scale-90 transition-transform duration-300 flex flex-col max-h-[90vh]" id="stock-edit-modal-content">
+            <div class="flex justify-between items-start border-b border-gray-100 pb-2">
+                <div>
+                    <h3 class="font-bold text-sm text-secondary" id="stock-edit-title">គ្រប់គ្រងស្តុកផលិតផល</h3>
+                    <p class="text-[10px] text-gray-400 mt-0.5" id="stock-edit-subtitle">ពិនិត្យប្រវត្តិ ទិញចូល ឬផ្ទៀងផ្ទាត់ស្តុក</p>
+                </div>
+                <button onclick="toggleStockEditModal(false)" class="text-gray-400 text-sm">✕</button>
+            </div>
+            
+            <input type="hidden" id="stock-edit-product-id">
+
+            <div class="flex border-b border-gray-100 shrink-0">
+                <button onclick="switchStockModalTab('in')" id="stock-tab-in" class="flex-1 py-2 text-xs font-bold text-primary border-b-2 border-primary">📥 ទិញចូលថ្មី</button>
+                <button onclick="switchStockModalTab('adj')" id="stock-tab-adj" class="flex-1 py-2 text-xs font-bold text-gray-400 border-b-2 border-transparent">⚖️ ផ្ទៀងស្តុកជាក់ស្តែង</button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto no-scrollbar space-y-4">
+                <div id="stock-in-form" class="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100 space-y-3">
+                    <p class="text-[10px] font-bold text-primary uppercase">📝 ទិន្នន័យឡូតិ៍ទិញចូលថ្មី</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[9px] text-gray-500 font-bold">ចំនួនទិញបន្ថែម *</label>
+                            <input type="number" id="stock-edit-qty-add" value="10" min="1" class="w-full mt-1 px-2 py-1.5 text-xs font-bold border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary text-center">
+                        </div>
+                        <div>
+                            <label class="text-[9px] text-gray-500 font-bold">ថ្លៃដើមឡូតិ៍នេះ ($) *</label>
+                            <input type="number" id="stock-edit-cost-add" step="0.01" value="0.35" class="w-full mt-1 px-2 py-1.5 text-xs font-bold border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary text-center">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] text-gray-500 font-bold">សម្គាល់ / អ្នកផ្គត់ផ្គង់</label>
+                        <input type="text" id="stock-edit-note" placeholder="ឧ. ក្រុមហ៊ុន Coca-Cola Cambodia" class="w-full mt-1 px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary">
+                    </div>
+                </div>
+
+                <div id="stock-adj-form" class="bg-amber-50/50 p-3 rounded-2xl border border-amber-100 space-y-3 hidden">
+                    <p class="text-[10px] font-bold text-amber-600 uppercase">📊 ផ្ទៀងផ្ទាត់តុល្យភាពស្តុកជាក់ស្តែង</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <p class="text-[9px] text-gray-500 font-bold">ស្តុកក្នុងប្រព័ន្ធ</p>
+                            <p id="stock-system-qty" class="text-sm font-extrabold text-secondary mt-1">0</p>
+                        </div>
+                        <div>
+                            <label class="text-[9px] text-gray-500 font-bold">ចំនួនរាប់ជាក់ស្តែង *</label>
+                            <input type="number" id="stock-actual-qty" oninput="calculateStockDiff()" class="w-full mt-1 px-2 py-1 text-xs font-bold border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 text-center">
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center bg-white p-2 rounded-xl border border-amber-100">
+                        <span class="text-[10px] text-gray-500">ផលខុសគ្នា (Discrepancy)៖</span>
+                        <span id="stock-diff-display" class="text-xs font-bold text-gray-700">0</span>
+                    </div>
+                    <div>
+                        <label class="text-[9px] text-gray-500 font-bold">មូលហេតុនៃការកែតម្រូវ *</label>
+                        <input type="text" id="stock-adj-reason" placeholder="ឧ. ខូចដប/បាត់សម្រាម" class="w-full mt-1 px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500">
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase">📊 ប្រវត្តិលម្អិតនៃការចូលស្តុក & កែតម្រូវ</p>
+                    <div id="stock-history-list" class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                        <!-- Loaded by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-2 pt-2 border-t border-gray-100 shrink-0">
+                <button onclick="toggleStockEditModal(false)" class="flex-1 bg-gray-100 text-gray-600 font-semibold py-2 rounded-xl text-xs">បិទ</button>
+                <button id="stock-save-btn" onclick="saveStockAdjustment()" class="flex-1 bg-primary text-white font-bold py-2 rounded-xl text-xs shadow-md">យល់ព្រមបញ្ចូលស្តុក</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ៦. Add Customer Modal -->
+    <div id="new-customer-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-xs p-5 space-y-4 transform scale-90 transition-transform duration-300" id="new-customer-modal-content">
+            <h3 class="font-bold text-sm text-secondary">ចុះឈ្មោះសមាជិកថ្មី</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-[10px] text-gray-400">ឈ្មោះអតិថិជន *</label>
+                    <input type="text" id="new-cust-name" class="w-full mt-1 px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary" placeholder="ឧ. កែវ ផល្លា">
+                </div>
+                <div>
+                    <label class="text-[10px] text-gray-400">លេខទូរស័ព្ទ *</label>
+                    <input type="tel" id="new-cust-phone" class="w-full mt-1 px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary" placeholder="ឧ. 096xxxxxxx">
+                </div>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="toggleNewCustomerModal(false)" class="flex-1 bg-gray-100 text-gray-600 font-semibold py-2 rounded-xl text-xs">បោះបង់</button>
+                <button onclick="saveNewCustomer()" class="flex-1 bg-primary text-white font-bold py-2 rounded-xl text-xs shadow-md">ចុះឈ្មោះ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ៧. Add Product Modal -->
+    <div id="new-product-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-5 space-y-4 transform scale-90 transition-transform duration-300 flex flex-col max-h-[90vh]" id="new-product-modal-content">
+            <div class="flex justify-between items-start border-b border-gray-100 pb-2 shrink-0">
+                <div>
+                    <h3 class="font-bold text-sm text-secondary">➕ បង្កើតទំនិញថ្មី</h3>
+                    <p class="text-[10px] text-gray-400 mt-0.5">បញ្ចូលព័ត៌មានទំនិញថ្មី និងកូដសម្គាល់</p>
+                </div>
+                <button onclick="toggleNewProductModal(false)" class="text-gray-400 text-sm">✕</button>
+            </div>
+            <div class="flex-1 overflow-y-auto no-scrollbar space-y-3 pr-1">
+                <div>
+                    <label class="text-[10px] text-gray-500 font-bold">ឈ្មោះទំនិញ *</label>
+                    <input type="text" id="new-prod-name" placeholder="ឧ. កាហ្វេកំប៉ុង បក្សី (Birdy)" class="w-full mt-1 px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold">លេខកូដបាកូដ (Barcode) *</label>
+                        <input type="text" id="new-prod-barcode" placeholder="ឧ. 8851025..." class="w-full mt-1 px-3 py-2 text-xs font-mono border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold">កូដ SKU (គ្រប់គ្រងស្តុក)</label>
+                        <input type="text" id="new-prod-sku" placeholder="ឧ. BEV-BIRDY-01" class="w-full mt-1 px-3 py-2 text-xs font-mono border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold">ប្រភេទក្រុមទំនិញ *</label>
+                        <select id="new-prod-category" class="w-full mt-1 px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary bg-white">
+                            <option value="1">ភេសជ្ជៈ</option>
+                            <option value="2">គ្រឿងទេស</option>
+                            <option value="3">របស់ប្រើប្រាស់</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold">រូបតំណាង (Emoji) *</label>
+                        <input type="text" id="new-prod-emoji" value="📦" class="w-full mt-1 px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary text-center">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold">ថ្លៃដើមដំបូង ($) *</label>
+                        <input type="number" id="new-prod-cost" step="0.01" value="0.30" class="w-full mt-1 px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary text-center">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold">តម្លៃលក់ចេញ ($) *</label>
+                        <input type="number" id="new-prod-price" step="0.01" value="0.50" class="w-full mt-1 px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary text-center">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold">ស្តុកដំបូង *</label>
+                        <input type="number" id="new-prod-stock" value="50" class="w-full mt-1 px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary text-center">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold">ព្រំដែនស្តុកទាប *</label>
+                        <input type="number" id="new-prod-low-limit" value="10" class="w-full mt-1 px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary text-center">
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-2 pt-2 border-t border-gray-100 shrink-0">
+                <button onclick="toggleNewProductModal(false)" class="flex-1 bg-gray-100 text-gray-600 font-semibold py-2 rounded-xl text-xs">បោះបង់</button>
+                <button onclick="saveNewProduct()" class="flex-1 bg-primary text-white font-bold py-2 rounded-xl text-xs shadow-md">យល់ព្រមបង្កើត</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ៨. Bulk Price Modal -->
+    <div id="bulk-price-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-5 space-y-4 transform scale-90 transition-transform duration-300 flex flex-col max-h-[90vh]" id="bulk-price-modal-content">
+            <div class="flex justify-between items-start border-b border-gray-100 pb-2 shrink-0">
+                <div>
+                    <h3 class="font-bold text-sm text-secondary">🏷️ កែតម្លៃលក់ជាកញ្ចប់</h3>
+                    <p class="text-[10px] text-gray-400 mt-0.5">ប្ដូរតម្លៃលក់ផលិតផលទាំងអស់ក្នុងពេលតែមួយ</p>
+                </div>
+                <button onclick="toggleBulkPriceModal(false)" class="text-gray-400 text-sm">✕</button>
+            </div>
+
+            <div class="bg-blue-50/50 p-3 rounded-2xl border border-blue-100 space-y-2 shrink-0">
+                <p class="text-[10px] font-bold text-blue-600 uppercase">⚡ កែសម្រួលរហ័សគ្រប់ទំនិញទាំងអស់</p>
+                <div class="grid grid-cols-3 gap-2">
+                    <select id="bulk-adjust-type" class="text-[9px] font-bold bg-white border border-gray-200 rounded-lg px-2 py-1.5 outline-none">
+                        <option value="pct_up">ឡើងថ្លៃ (+%)</option>
+                        <option value="pct_down">ចុះថ្លៃ (-%)</option>
+                        <option value="val_up">ឡើងថ្លៃ (+$)</option>
+                        <option value="val_down">ចុះថ្លៃ (-$)</option>
+                    </select>
+                    <input type="number" id="bulk-adjust-value" placeholder="ឧ. 5" class="w-full px-2 py-1.5 text-xs text-center border border-gray-200 rounded-lg focus:outline-none">
+                    <button onclick="applyBulkMathAdjustment()" class="bg-blue-600 text-white text-[10px] font-bold py-1.5 rounded-lg active:scale-95 transition">អនុវត្ត</button>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto no-scrollbar space-y-2">
+                <p class="text-[10px] font-bold text-gray-400 uppercase">📝 កែសម្រួលតម្លៃលក់ផ្ទាល់ដៃតាមមុខទំនិញ</p>
+                <div id="bulk-price-items-list" class="space-y-2">
+                    <!-- Loaded by JS -->
+                </div>
+            </div>
+
+            <div class="flex gap-2 pt-2 border-t border-gray-100 shrink-0">
+                <button onclick="toggleBulkPriceModal(false)" class="flex-1 bg-gray-100 text-gray-600 font-semibold py-2 rounded-xl text-xs">បោះបង់</button>
+                <button onclick="saveBulkPriceChanges()" class="flex-1 bg-primary text-white font-bold py-2 rounded-xl text-xs shadow-md">រក្សាទុកទាំងអស់</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ៩. Product Detail Edit Modal -->
+    <div id="product-edit-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-5 space-y-4 transform scale-90 transition-transform duration-300 flex flex-col max-h-[90vh]" id="product-edit-modal-content">
+            <div class="flex justify-between items-start border-b border-gray-100 pb-2">
+                <div>
+                    <h3 class="font-bold text-sm text-secondary" id="prod-edit-title">✏️ កែព័ត៌មាន & តម្លៃលក់</h3>
+                    <p class="text-[10px] text-gray-400 mt-0.5">ប្ដូរតម្លៃលក់ កូដសម្គាល់ ឬឈ្មោះទំនិញ</p>
+                </div>
+                <button onclick="toggleProductEditModal(false)" class="text-gray-400 text-sm">✕</button>
+            </div>
+            <input type="hidden" id="edit-prod-id">
+            <div class="flex-1 overflow-y-auto no-scrollbar space-y-3 pr-1">
+                <div>
+                    <label class="text-[10px] text-gray-500 font-bold">ឈ្មោះទំនិញ *</label>
+                    <input type="text" id="edit-prod-name" class="w-full mt-1 px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold">លេខកូដបាកូដ (Barcode) *</label>
+                        <input type="text" id="edit-prod-barcode" class="w-full mt-1 px-3 py-2 text-xs font-mono border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold">កូដ SKU (គ្រប់គ្រងស្តុក)</label>
+                        <input type="text" id="edit-prod-sku" class="w-full mt-1 px-3 py-2 text-xs font-mono border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold">តម្លៃលក់ចេញ ($) *</label>
+                        <input type="number" id="edit-prod-price" step="0.01" class="w-full mt-1 px-3 py-2 text-xs font-bold border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary text-center text-primary">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-bold">ព្រំដែនស្តុកទាប *</label>
+                        <input type="number" id="edit-prod-low-limit" class="w-full mt-1 px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary text-center">
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-2.5 rounded-xl border border-gray-100 space-y-1 text-[10px] text-gray-500">
+                    <p class="font-bold">ព័ត៌មានបច្ចុប្បន្នភាពស្តុក៖</p>
+                    <div class="flex justify-between">
+                        <span>ថ្លៃដើមមធ្យម (WAC)៖</span>
+                        <span id="edit-prod-cost-display" class="font-bold text-gray-700">$0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>ស្តុកក្នុងប្រព័ន្ធបច្ចុប្បន្ន៖</span>
+                        <span id="edit-prod-stock-display" class="font-bold text-gray-700">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-2 pt-2 border-t border-gray-100 shrink-0">
+                <button onclick="toggleProductEditModal(false)" class="flex-1 bg-gray-100 text-gray-600 font-semibold py-2 rounded-xl text-xs">បោះបង់</button>
+                <button onclick="saveProductDetails()" class="flex-1 bg-primary text-white font-bold py-2 rounded-xl text-xs shadow-md">រក្សាទុកការផ្លាស់ប្តូរ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-notif" class="fixed top-5 left-1/2 -translate-x-1/2 bg-secondary text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2 transform -translate-y-20 opacity-0 transition-all duration-300 z-[100] whitespace-nowrap">
+        <span id="toast-icon">ℹ️</span>
+        <span id="toast-message">សារដំណឹង</span>
+    </div>
+
+    <!-- Printable Report Sheet Modal -->
+    <div id="report-sheet-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-2 sm:p-4">
+        <div class="bg-white rounded-3xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden transform scale-90 transition-transform duration-300 shadow-2xl" id="report-sheet-modal-content">
+            <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0 bg-gray-50 print:hidden">
+                <div class="flex items-center gap-2">
+                    <span class="text-base">📋</span>
+                    <span class="text-xs font-bold text-secondary">ទិដ្ឋភាពសន្លឹករបាយការណ៍ផ្លូវការ (A4 Sheet Preview)</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="printReportSheet()" class="bg-primary hover:bg-emerald-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition shadow-sm">
+                        🖨️ បោះពុម្ព (Print)
+                    </button>
+                    <button onclick="toggleReportSheetModal(false)" class="text-gray-400 hover:text-gray-600 text-lg p-1">✕</button>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6 bg-white" id="report-printable-area">
+                <!-- Loaded dynamically by JS -->
+            </div>
+
+            <div class="p-3 bg-gray-50 border-t border-gray-100 flex justify-end gap-2 shrink-0 print:hidden">
+                <button onclick="toggleReportSheetModal(false)" class="bg-gray-200 text-gray-700 font-bold px-4 py-2 rounded-xl text-xs active:scale-95 transition">
+                    បិទផ្ទាំង
+                </button>
+                <button onclick="printReportSheet()" class="bg-primary text-white font-bold px-5 py-2 rounded-xl text-xs shadow-sm active:scale-95 transition">
+                    🖨️ បោះពុម្ពសន្លឹកនេះ ➔
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ១. មុខងារសម្រាប់បង្ហាញសារដំណឹងបណ្តែត (Custom Toast Notification)
+        function showToast(message, icon = 'ℹ️') {
+            const toast = document.getElementById('toast-notif');
+            const toastMessage = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+            
+            if (toast && toastMessage && toastIcon) {
+                toastMessage.innerText = message;
+                toastIcon.innerText = icon;
+                
+                toast.classList.remove('-translate-y-20', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+
+                setTimeout(() => {
+                    toast.classList.add('-translate-y-20', 'opacity-0');
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                }, 2500);
+            }
+        }
+
+        // ២. រៀបចំទិន្នន័យមូលដ្ឋាននៅក្នុងប្រព័ន្ធ (In-Memory State)
+        const categories = {
+            'all': 'ទាំងអស់',
+            '1': 'ភេសជ្ជៈ',
+            '2': 'គ្រឿងទេស',
+            '3': 'របស់ប្រើប្រាស់'
+        };
+
+        const EXCHANGE_RATE = 4100; // 1$ = 4100៛
+
+        let products = [
+            { id: 1, barcode: '884001234567', sku: 'BEV-COCA-01', name: 'កូកាកូឡា កំប៉ុង (330ml)', categoryId: '1', cost: 0.35, price: 0.50, stock: 120, lowLimit: 20, emoji: '🥤' },
+            { id: 2, barcode: '884001234568', sku: 'BEV-WATER-01', name: 'ទឹកបរិសុទ្ធ វីតាល់ (500ml)', categoryId: '1', cost: 0.15, price: 0.25, stock: 240, lowLimit: 30, emoji: '💧' },
+            { id: 3, barcode: '885002468101', sku: 'GRO-RICE-01', name: 'អង្ករផ្កាម្លិះ (5kg)', categoryId: '2', cost: 4.50, price: 6.00, stock: 15, lowLimit: 5, emoji: '🌾' },
+            { id: 4, barcode: '885002468102', sku: 'GRO-NOODLE-01', name: 'មីម៉ាម៉ា សាច់ជ្រូកចិញ្រ្ចាំ (កេស)', categoryId: '2', cost: 3.80, price: 4.80, stock: 4, lowLimit: 5, emoji: '🍜' },
+            { id: 5, barcode: '886003579123', sku: 'HOU-SOAP-01', name: 'សាប៊ូដុសខ្លួន Lux (85g)', categoryId: '3', cost: 0.45, price: 0.70, stock: 50, lowLimit: 10, emoji: '🧼' }
+        ];
+
+        // តារាងកត់ត្រាប្រតិបត្តិការស្តុកទិញចូល (Stock Transaction Ledger)
+        let stockTransactions = [
+            { id: 1, productId: 1, date: '2026-07-01 10:00', type: 'IN', qty: 100, cost: 0.35, note: 'បើកហាងដំបូង (Heang Kimhay)', voided: false },
+            { id: 2, productId: 1, date: '2026-07-04 15:30', type: 'IN', qty: 20, cost: 0.35, note: 'ទិញបន្ថែមថែមស្តុក', voided: false },
+            { id: 3, productId: 2, date: '2026-07-01 10:00', type: 'IN', qty: 240, cost: 0.15, note: 'បើកហាងដំបូង (Vital Water Co.)', voided: false },
+            { id: 4, productId: 3, date: '2026-07-02 09:00', type: 'IN', qty: 15, cost: 4.50, note: 'ទិញចូលពីដេប៉ូធំ', voided: false },
+            { id: 5, productId: 4, date: '2026-07-03 11:15', type: 'IN', qty: 4, cost: 3.80, note: 'ទិញពីដេប៉ូផ្សារអូរឫស្សី', voided: false },
+            { id: 6, productId: 5, date: '2026-07-01 10:00', type: 'IN', qty: 50, cost: 0.45, note: 'បើកហាងដំបូង (Unilever)', voided: false }
+        ];
+
+        let customers = [
+            { id: 1, name: 'គង់ ណារ៉េត', phone: '012998877', points: 120 },
+            { id: 2, name: 'ម៉ៅ សុភ័ក្ត្រ', phone: '016445566', points: 45 }
+        ];
+
+        let salesHistory = [
+            { id: 1001, date: '2026-07-05 11:30', finalAmount: 8.00, cost: 5.70, itemsCount: 7, method: 'KHQR' },
+            { id: 1002, date: '2026-07-05 13:15', finalAmount: 1.45, cost: 0.90, itemsCount: 4, method: 'Cash' }
+        ];
+
+        let cart = {};
+        let currentCategory = 'all';
+        let currentTab = 'pos';
+        let selectedCustomerId = null;
+
+        let selectedPaymentMethod = 'Cash';
+        let selectedCashCurrency = 'USD'; // 'USD' or 'KHR'
+        let finalAmountToPayUSD = 0;
+        let finalAmountToPayKHR = 0;
+        let currentStockModalTab = 'in'; // 'in' or 'adj'
+
+        // ៣. ដំណើរការនៅពេលបើក App ដំបូង
+        window.onload = function() {
+            renderPOSProducts();
+            renderStockProducts();
+            renderCustomersList();
+            updateCartBadge();
+            renderReports();
+            populateCustomerSelect();
+            initReportDatePickers();
+        };
+
+        function initReportDatePickers() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            
+            const firstDayOfMonth = `${year}-${month}-01`;
+            const todayStr = `${year}-${month}-${day}`;
+
+            document.getElementById('report-from-date').value = firstDayOfMonth;
+            document.getElementById('report-to-date').value = todayStr;
+        }
+
+        function toggleReportDateFields() {
+            const type = document.getElementById('report-sheet-type').value;
+            const fields = document.getElementById('report-date-fields');
+            if (type === 'sales') {
+                fields.classList.remove('hidden');
+            } else {
+                fields.classList.add('hidden');
+            }
+        }
+
+        function toggleReportSheetModal(show) {
+            const modal = document.getElementById('report-sheet-modal');
+            const content = document.getElementById('report-sheet-modal-content');
+            if (show) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-90');
+            }
+        }
+
+        function printReportSheet() {
+            window.print();
+        }
+
+        function renderPOSProducts() {
+            const grid = document.getElementById('pos-products-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            
+            const searchQuery = document.getElementById('pos-search').value.toLowerCase();
+
+            const filtered = products.filter(p => {
+                const matchesCat = (currentCategory === 'all' || p.categoryId === currentCategory);
+                const matchesSearch = p.name.toLowerCase().includes(searchQuery) || p.barcode.includes(searchQuery);
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-2 text-center py-10 text-gray-400 text-xs">រកមិនឃើញទំនិញឡើយ!</div>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const isLow = p.stock <= p.lowLimit;
+                const card = document.createElement('div');
+                card.onclick = () => addToCart(p.id);
+                card.className = `bg-white p-3.5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between cursor-pointer active:scale-95 transition duration-150 relative overflow-hidden`;
+                
+                card.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div class="text-3xl">${p.emoji}</div>
+                        ${isLow ? '<span class="bg-red-100 text-red-600 text-[8px] font-bold px-1.5 py-0.5 rounded-full">ស្តុកទាប</span>' : ''}
+                    </div>
+                    <div class="mt-3">
+                        <h4 class="text-xs font-bold text-gray-800 line-clamp-2 leading-snug">${p.name}</h4>
+                        <div class="flex items-baseline justify-between mt-1.5">
+                            <span class="text-xs text-gray-400 font-medium">ស្តុក៖ ${p.stock}</span>
+                            <span class="text-sm font-extrabold text-primary">$${p.price.toFixed(2)}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterProducts() {
+            renderPOSProducts();
+        }
+
+        function selectCategory(catId) {
+            currentCategory = catId;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white', 'shadow-sm');
+                btn.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+            });
+            event.target.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+            event.target.classList.add('bg-primary', 'text-white', 'shadow-sm');
+            renderPOSProducts();
+        }
+
+        function getProductWAC(productId) {
+            const txs = stockTransactions.filter(t => t.productId === productId && t.type === 'IN' && !t.voided);
+            if (txs.length === 0) {
+                const prod = products.find(p => p.id === productId);
+                return prod ? prod.cost : 0;
+            }
+            let totalQty = 0;
+            let totalCost = 0;
+            txs.forEach(t => {
+                totalQty += t.qty;
+                totalCost += (t.qty * t.cost);
+            });
+            return totalQty > 0 ? (totalCost / totalQty) : 0;
+        }
+
+        function renderStockProducts() {
+            const list = document.getElementById('stock-products-list');
+            if (!list) return;
+            list.innerHTML = '';
+            
+            const searchQuery = document.getElementById('stock-search').value.toLowerCase();
+            let lowCount = 0;
+
+            products.forEach(p => {
+                const isLow = p.stock <= p.lowLimit;
+                if (isLow) lowCount++;
+
+                const matchesSearch = p.name.toLowerCase().includes(searchQuery) || p.barcode.includes(searchQuery);
+                if (!matchesSearch) return;
+
+                const wac = getProductWAC(p.id);
+
+                const card = document.createElement('div');
+                card.className = `bg-white p-3 rounded-2xl border ${isLow ? 'border-orange-200 bg-orange-50/20' : 'border-gray-100'} shadow-sm flex items-center justify-between gap-2`;
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="text-2xl p-2 bg-gray-50 rounded-xl">${p.emoji}</div>
+                        <div>
+                            <h4 class="text-xs font-bold text-gray-800">${p.name}</h4>
+                            <p class="text-[9px] text-gray-400">កូដ៖ ${p.barcode} | SKU: ${p.sku}</p>
+                            <p class="text-[10px] text-gray-500 font-semibold">ថ្លៃដើម (WAC)៖ <span class="text-primary font-bold">$${wac.toFixed(2)}</span> | តម្លៃលក់៖ <span class="text-blue-600 font-bold">$${p.price.toFixed(2)}</span></p>
+                            <p class="text-[10px] font-bold ${isLow ? 'text-red-500 animate-pulse' : 'text-gray-600'}">
+                                ចំនួនស្តុក៖ ${p.stock} (ព្រំដែន៖ ${p.lowLimit})
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1.5 shrink-0">
+                        <button onclick="openStockEditModal(${p.id})" class="bg-primary/10 text-primary text-[10px] font-bold px-3 py-1.5 rounded-lg active:scale-95 transition">
+                            📦 ស្តុក
+                        </button>
+                        <button onclick="openProductEditModal(${p.id})" class="bg-gray-100 text-gray-600 text-[10px] font-bold px-3 py-1.5 rounded-lg active:scale-95 transition">
+                            ✏️ កែព័ត៌មាន
+                        </button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+
+            document.getElementById('low-stock-count').innerText = `ស្តុកទាប៖ ${lowCount}`;
+        }
+
+        function filterStockProducts() {
+            renderStockProducts();
+        }
+
+        function openStockEditModal(productId) {
+            const p = products.find(prod => prod.id === productId);
+            if (!p) return;
+            document.getElementById('stock-edit-title').innerText = `កែតម្រូវស្តុក៖ ${p.name}`;
+            document.getElementById('stock-edit-product-id').value = productId;
+            
+            document.getElementById('stock-edit-qty-add').value = 10;
+            document.getElementById('stock-edit-cost-add').value = p.cost.toFixed(2);
+            document.getElementById('stock-edit-note').value = "";
+
+            document.getElementById('stock-system-qty').innerText = p.stock;
+            document.getElementById('stock-actual-qty').value = p.stock;
+            document.getElementById('stock-adj-reason').value = "";
+            calculateStockDiff();
+
+            switchStockModalTab('in');
+            renderStockHistory(productId);
+            toggleStockEditModal(true);
+        }
+
+        function switchStockModalTab(tab) {
+            currentStockModalTab = tab;
+            const inTab = document.getElementById('stock-tab-in');
+            const adjTab = document.getElementById('stock-tab-adj');
+            const inForm = document.getElementById('stock-in-form');
+            const adjForm = document.getElementById('stock-adj-form');
+            const saveBtn = document.getElementById('stock-save-btn');
+
+            if (tab === 'in') {
+                inTab.classList.add('text-primary', 'border-primary');
+                inTab.classList.remove('text-gray-400', 'border-transparent');
+                adjTab.classList.remove('text-primary', 'border-primary');
+                adjTab.classList.add('text-gray-400', 'border-transparent');
+                inForm.classList.remove('hidden');
+                adjForm.classList.add('hidden');
+                saveBtn.innerText = "យល់ព្រមបញ្ចូលស្តុក";
+            } else {
+                adjTab.classList.add('text-amber-600', 'border-amber-600');
+                adjTab.classList.remove('text-gray-400', 'border-transparent');
+                inTab.classList.remove('text-primary', 'border-primary');
+                inTab.classList.add('text-gray-400', 'border-transparent');
+                adjForm.classList.remove('hidden');
+                inForm.classList.add('hidden');
+                saveBtn.innerText = "រក្សាទុកការផ្ទៀងស្តុក";
+            }
+        }
+
+        function calculateStockDiff() {
+            const system = parseInt(document.getElementById('stock-system-qty').innerText) || 0;
+            const actual = parseInt(document.getElementById('stock-actual-qty').value) || 0;
+            const diff = actual - system;
+            const display = document.getElementById('stock-diff-display');
+            
+            if (diff > 0) {
+                display.innerText = `+${diff} (លើសស្តុក)`;
+                display.className = "text-xs font-bold text-emerald-600";
+            } else if (diff < 0) {
+                display.innerText = `${diff} (បាត់ស្តុក)`;
+                display.className = "text-xs font-bold text-red-500";
+            } else {
+                display.innerText = "0 (ស្មើគ្នា)";
+                display.className = "text-xs font-bold text-gray-500";
+            }
+        }
+
+        function renderStockHistory(productId) {
+            const container = document.getElementById('stock-history-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const txs = stockTransactions.filter(t => t.productId === productId);
+            if (txs.length === 0) {
+                container.innerHTML = `<p class="text-[10px] text-gray-400 text-center py-2">គ្មានប្រវត្តិលម្អិតទេ</p>`;
+                return;
+            }
+
+            txs.slice().reverse().forEach(t => {
+                const isVoided = t.voided;
+                const item = document.createElement('div');
+                item.className = `p-2 rounded-xl text-[10px] border flex justify-between items-center ${isVoided ? 'bg-gray-100 text-gray-400 line-through' : t.type === 'IN' ? 'bg-emerald-50 border-emerald-100 text-emerald-900' : 'bg-amber-50 border-amber-100 text-amber-900'}`;
+                
+                item.innerHTML = `
+                    <div class="space-y-0.5">
+                        <div class="flex items-center gap-1">
+                            <span class="font-bold">${t.type === 'IN' ? '📥 ទិញចូល' : '⚖️ ផ្ទៀងស្តុក'}</span>
+                            <span class="font-bold">x${t.qty > 0 ? '+' + t.qty : t.qty}</span>
+                            ${t.cost ? `<span class="text-gray-400">($${t.cost.toFixed(2)}/u)</span>` : ''}
+                        </div>
+                        <p class="text-[8px] text-gray-400 font-mono">${t.date}</p>
+                        ${t.note ? `<p class="text-[8px] italic text-gray-500">សម្គាល់៖ ${t.note}</p>` : ''}
+                    </div>
+                    ${!isVoided ? `<button onclick="voidStockTransaction(${t.id})" class="text-red-500 font-extrabold hover:text-red-600 px-1 text-[8px] border border-red-200 bg-white rounded active:scale-90">🚫 បោះបង់</button>` : `<span class="text-[8px] text-gray-400">បានបោះបង់</span>`}
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function saveStockAdjustment() {
+            const productId = parseInt(document.getElementById('stock-edit-product-id').value);
+            const p = products.find(prod => prod.id === productId);
+            if (!p) return;
+
+            const dateStr = new Date().toLocaleString('km-KH', { hour12: false }).replace(',', '');
+            const newTxId = stockTransactions.length + 1;
+
+            if (currentStockModalTab === 'in') {
+                const addQty = parseInt(document.getElementById('stock-edit-qty-add').value) || 0;
+                const cost = parseFloat(document.getElementById('stock-edit-cost-add').value) || 0;
+                const note = document.getElementById('stock-edit-note').value.trim();
+
+                if (addQty <= 0 || cost <= 0) {
+                    showToast("សូមបញ្ចូលចំនួន និងតម្លៃដើមឱ្យបានត្រឹមត្រូវ!", "❌");
+                    return;
+                }
+
+                p.stock += addQty;
+                stockTransactions.push({
+                    id: newTxId,
+                    productId: productId,
+                    date: dateStr,
+                    type: 'IN',
+                    qty: addQty,
+                    cost: cost,
+                    note: note || "ទិញចូលស្តុកឡូតិ៍ថ្មី",
+                    voided: false
+                });
+
+                showToast(`បានបញ្ចូលស្តុក "${p.name}" ចំនួន +${addQty}`, '📥');
+            } else {
+                const system = p.stock;
+                const actual = parseInt(document.getElementById('stock-actual-qty').value);
+                const reason = document.getElementById('stock-adj-reason').value.trim();
+                const diff = actual - system;
+
+                if (isNaN(actual) || actual < 0) {
+                    showToast("សូមបញ្ចូលចំនួនជាក់ស្តែងឱ្យបានត្រឹមត្រូវ!", "❌");
+                    return;
+                }
+
+                if (diff === 0) {
+                    showToast("គ្មានការផ្លាស់ប្តូរទេ ព្រោះចំនួនស្តុកស្មើគ្នា!", "ℹ️");
+                    return;
+                }
+
+                if (!reason) {
+                    showToast("សូមវាយបញ្ចូលមូលហេតុនៃការកែតម្រូវ!", "❌");
+                    return;
+                }
+
+                p.stock = actual;
+                stockTransactions.push({
+                    id: newTxId,
+                    productId: productId,
+                    date: dateStr,
+                    type: 'ADJ',
+                    qty: diff,
+                    cost: p.cost,
+                    note: reason,
+                    voided: false
+                });
+
+                showToast(`បានកែតម្រូវស្តុក "${p.name}" ទៅ ${actual}`, '⚖️');
+            }
+
+            toggleStockEditModal(false);
+            renderStockProducts();
+            renderPOSProducts();
+        }
+
+        function voidStockTransaction(txId) {
+            const tx = stockTransactions.find(t => t.id === txId);
+            if (!tx) return;
+            const prod = products.find(p => p.id === tx.productId);
+            if (!prod) return;
+
+            if (tx.type === 'IN') {
+                if (prod.stock < tx.qty) {
+                    showToast("មិនអាចបោះបង់បានទេ ព្រោះស្តុកបច្ចុប្បន្នតិចជាងចំនួនដែលចង់ដកចេញ!", "⚠️");
+                    return;
+                }
+                prod.stock -= tx.qty;
+            } else if (tx.type === 'ADJ') {
+                prod.stock -= tx.qty;
+            }
+
+            tx.voided = true;
+            showToast("បានបោះបង់ប្រតិបត្តិការដោយជោគជ័យ", "🚫");
+            renderStockHistory(tx.productId);
+            renderStockProducts();
+            renderPOSProducts();
+        }
+
+        function toggleStockEditModal(show) {
+            const modal = document.getElementById('stock-edit-modal');
+            const content = document.getElementById('stock-edit-modal-content');
+            if (show) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-90');
+            }
+        }
+
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            document.querySelectorAll('.app-view').forEach(view => view.classList.add('hidden'));
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.remove('text-primary');
+                btn.classList.add('text-gray-400');
+            });
+            document.getElementById(`nav-${tabName}`).classList.add('text-primary');
+            document.getElementById(`nav-${tabName}`).classList.remove('text-gray-400');
+
+            const cartBar = document.getElementById('floating-cart-bar');
+            const hasItems = Object.keys(cart).length > 0;
+            if (tabName === 'pos' && hasItems) {
+                cartBar.classList.remove('translate-y-20', 'opacity-0');
+                cartBar.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            } else {
+                cartBar.classList.add('translate-y-20', 'opacity-0');
+                cartBar.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            }
+
+            if (tabName === 'reports') {
+                renderReports();
+            }
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            if (product.stock <= 0) {
+                showToast("ទំនិញនេះគ្មានស្តុកឡើយ!", "❌");
+                return;
+            }
+
+            if (cart[productId]) {
+                if (cart[productId].qty >= product.stock) {
+                    showToast("មិនអាចលក់លើសចំនួនក្នុងស្តុកបានទេ!", "⚠️");
+                    return;
+                }
+                cart[productId].qty++;
+            } else {
+                cart[productId] = {
+                    qty: 1,
+                    product: product
+                };
+            }
+
+            showToast(`បានបន្ថែម ${product.name}`, "🛒");
+            updateCartBadge();
+            
+            if (currentTab === 'pos') {
+                const cartBar = document.getElementById('floating-cart-bar');
+                cartBar.classList.remove('translate-y-20', 'opacity-0');
+                cartBar.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        function updateCartBadge() {
+            let totalQty = 0;
+            let totalPrice = 0;
+
+            Object.values(cart).forEach(item => {
+                totalQty += item.qty;
+                totalPrice += (item.qty * item.product.price);
+            });
+
+            document.getElementById('cart-badge-count').innerText = totalQty;
+            document.getElementById('cart-total-preview').innerText = `$${totalPrice.toFixed(2)}`;
+            
+            if (totalQty === 0) {
+                const cartBar = document.getElementById('floating-cart-bar');
+                cartBar.classList.add('translate-y-20', 'opacity-0');
+                cartBar.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        function toggleCartModal(show) {
+            const modal = document.getElementById('cart-modal');
+            const content = document.getElementById('cart-modal-content');
+            if (show) {
+                renderCartItems();
+                applyCustomerDiscount();
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('translate-y-full');
+                content.classList.add('translate-y-0');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.remove('translate-y-0');
+                content.classList.add('translate-y-full');
+            }
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cart-items-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const keys = Object.keys(cart);
+            if (keys.length === 0) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-10 text-gray-400 text-xs">
+                        <span class="text-4xl mb-2">🛒</span>
+                        <span>កន្ត្រករបស់អ្នកទទេស្អាត!</span>
+                    </div>
+                `;
+                return;
+            }
+
+            keys.forEach(productId => {
+                const item = cart[productId];
+                const sub = item.qty * item.product.price;
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between border-b border-gray-50 pb-2.5';
+                row.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-xl">${item.product.emoji}</span>
+                        <div>
+                            <h4 class="text-xs font-bold text-gray-800 line-clamp-1">${item.product.name}</h4>
+                            <p class="text-[10px] text-gray-400">$${item.product.price.toFixed(2)} / item</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center bg-gray-100 rounded-lg overflow-hidden">
+                            <button onclick="updateCartQty(${productId}, -1)" class="px-2.5 py-1 text-xs font-bold text-gray-500 hover:bg-gray-200 active:scale-90">-</button>
+                            <span class="px-2 text-xs font-bold text-gray-700">${item.qty}</span>
+                            <button onclick="updateCartQty(${productId}, 1)" class="px-2.5 py-1 text-xs font-bold text-gray-500 hover:bg-gray-200 active:scale-90">+</button>
+                        </div>
+                        <span class="text-xs font-bold text-secondary w-14 text-right">$${sub.toFixed(2)}</span>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function updateCartQty(productId, amount) {
+            if (cart[productId]) {
+                const newQty = cart[productId].qty + amount;
+                if (newQty <= 0) {
+                    delete cart[productId];
+                    showToast("បានដកចេញពីកន្ត្រក", "🗑️");
+                } else {
+                    if (newQty > cart[productId].product.stock) {
+                        showToast("ស្តុកទំនិញមិនគ្រប់គ្រាន់ទេ!", "⚠️");
+                        return;
+                    }
+                    cart[productId].qty = newQty;
+                }
+                renderCartItems();
+                updateCartBadge();
+                applyCustomerDiscount();
+            }
+        }
+
+        function renderCustomersList() {
+            const list = document.getElementById('customers-display-list');
+            if (!list) return;
+            list.innerHTML = '';
+            
+            const searchQuery = document.getElementById('customer-search').value.toLowerCase();
+
+            customers.forEach(c => {
+                const matches = c.name.toLowerCase().includes(searchQuery) || c.phone.includes(searchQuery);
+                if (!matches) return;
+
+                const card = document.createElement('div');
+                card.className = `bg-white p-3 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between`;
+                card.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs uppercase">
+                            ${c.name.substring(0, 1)}
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-gray-800">${c.name}</h4>
+                            <p class="text-[10px] text-gray-400">ទូរស័ព្ទ៖ ${c.phone}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-lg">
+                            🌟 ${c.points} ពិន្ទុ
+                        </span>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function filterCustomersList() {
+            renderCustomersList();
+        }
+
+        function populateCustomerSelect() {
+            const select = document.getElementById('checkout-customer-select');
+            if (!select) return;
+            select.innerHTML = `<option value="">-- ជ្រើសរើសសមាជិក --</option>`;
+            customers.forEach(c => {
+                const op = document.createElement('option');
+                op.value = c.id;
+                op.innerText = `${c.name} (${c.phone})`;
+                select.appendChild(op);
+            });
+        }
+
+        function toggleNewCustomerModal(show) {
+            const modal = document.getElementById('new-customer-modal');
+            const content = document.getElementById('new-customer-modal-content');
+            if (show) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-90');
+            }
+        }
+
+        function saveNewCustomer() {
+            const name = document.getElementById('new-cust-name').value.trim();
+            const phone = document.getElementById('new-cust-phone').value.trim();
+
+            if (!name || !phone) {
+                showToast("សូមបញ្ចូលព័ត៌មានឱ្យបានពេញលេញ!", "❌");
+                return;
+            }
+
+            const exists = customers.some(c => c.phone === phone);
+            if (exists) {
+                showToast("លេខទូរស័ព្ទនេះធ្លាប់ចុះឈ្មោះរួចហើយ!", "⚠️");
+                return;
+            }
+
+            const newCust = {
+                id: customers.length + 1,
+                name: name,
+                phone: phone,
+                points: 0
+            };
+
+            customers.push(newCust);
+            showToast("ចុះឈ្មោះសមាជិកថ្មីជោគជ័យ", "👥");
+            
+            document.getElementById('new-cust-name').value = '';
+            document.getElementById('new-cust-phone').value = '';
+            
+            toggleNewCustomerModal(false);
+            renderCustomersList();
+            populateCustomerSelect();
+        }
+
+        function applyCustomerDiscount() {
+            const select = document.getElementById('checkout-customer-select');
+            if (!select) return;
+            selectedCustomerId = select.value ? parseInt(select.value) : null;
+
+            let subtotal = 0;
+            Object.values(cart).forEach(item => {
+                subtotal += (item.qty * item.product.price);
+            });
+
+            let discount = 0;
+            let pointsMsg = "គ្មានការបញ្ចុះតម្លៃ";
+
+            if (selectedCustomerId) {
+                const customer = customers.find(c => c.id === selectedCustomerId);
+                if (customer) {
+                    discount = subtotal * 0.05; 
+                    pointsMsg = `សមាជិក VIP (បញ្ចុះតម្លៃ 5%)`;
+                }
+            }
+
+            const final = subtotal - discount;
+
+            document.getElementById('checkout-subtotal').innerText = `$${subtotal.toFixed(2)}`;
+            document.getElementById('checkout-discount').innerText = `-$${discount.toFixed(2)}`;
+            document.getElementById('checkout-final').innerText = `$${final.toFixed(2)}`;
+            document.getElementById('customer-points-preview').innerText = pointsMsg;
+        }
+
+        function showDraftPreview() {
+            const container = document.getElementById('draft-paper');
+            if (!container) return;
+
+            let subtotal = 0;
+            let itemsHtml = '';
+
+            Object.values(cart).forEach(item => {
+                const itemTotal = item.qty * item.product.price;
+                subtotal += itemTotal;
+                itemsHtml += `
+                    <div class="flex justify-between text-xs text-gray-600">
+                        <span>${item.product.name} x${item.qty}</span>
+                        <span>$${itemTotal.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+
+            let discount = 0;
+            let customerName = "ភ្ញៀវទូទៅ";
+            if (selectedCustomerId) {
+                const cust = customers.find(c => c.id === selectedCustomerId);
+                if (cust) {
+                    discount = subtotal * 0.05;
+                    customerName = cust.name;
+                }
+            }
+
+            const final = subtotal - discount;
+            finalAmountToPayUSD = final;
+            finalAmountToPayKHR = final * EXCHANGE_RATE;
+
+            const dateStr = new Date().toLocaleString('km-KH', { hour12: false }).replace(',', '');
+
+            container.innerHTML = `
+                <div class="text-center space-y-1">
+                    <span class="text-blue-500 font-bold uppercase text-[10px] bg-blue-50 px-2 py-1 rounded border border-blue-100">📋 សន្លឹកពង្រាងវិក្កយបត្រ (Draft)</span>
+                    <h2 class="text-sm font-bold text-secondary mt-2">Heang Kimhay Retail Shop</h2>
+                    <p class="text-[9px] text-gray-400">ទំនិញក្នុងកន្ត្រក - មិនទាន់ទូទាត់ប្រាក់ & មិនទាន់កាត់ស្តុកទេ</p>
+                </div>
+
+                <div class="border-t border-dashed border-gray-200 pt-3 space-y-1 text-[9px] text-gray-500">
+                    <div class="flex justify-between">
+                        <span>សន្លឹកពង្រាង៖ #DRAFT</span>
+                        <span>អតិថិជន៖ ${customerName}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>កាលបរិច្ឆេទ៖ ${dateStr}</span>
+                    </div>
+                </div>
+
+                <div class="border-t border-dashed border-gray-200 py-3 space-y-2">
+                    ${itemsHtml}
+                </div>
+
+                <div class="border-t border-dashed border-gray-200 pt-3 space-y-1 text-xs">
+                    <div class="flex justify-between text-gray-500">
+                        <span>សរុបដើម៖</span>
+                        <span>$${subtotal.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between text-red-500">
+                        <span>បញ្ចុះតម្លៃ៖</span>
+                        <span>-$${discount.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-sm text-secondary pt-1 border-t border-gray-100">
+                        <span>សរុបត្រូវបង់ ($)៖</span>
+                        <span class="text-primary">$${final.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-xs text-amber-600">
+                        <span>សរុបត្រូវបង់ (៛)៖</span>
+                        <span>${finalAmountToPayKHR.toLocaleString()} ៛</span>
+                    </div>
+                </div>
+            `;
+
+            toggleCartModal(false);
+            toggleDraftModal(true);
+        }
+
+        function toggleDraftModal(show) {
+            const modal = document.getElementById('draft-modal');
+            const content = document.getElementById('draft-modal-content');
+            if (show) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-90');
+            }
+        }
+
+        function openPaymentModal() {
+            document.getElementById('pay-total-usd').innerText = `$${finalAmountToPayUSD.toFixed(2)}`;
+            document.getElementById('pay-total-khr').innerText = `${finalAmountToPayKHR.toLocaleString()} ៛`;
+            
+            document.getElementById('khqr-total-display').innerText = `$${finalAmountToPayUSD.toFixed(2)} / ${finalAmountToPayKHR.toLocaleString()} ៛`;
+
+            document.getElementById('cash-received-input').value = "";
+            document.getElementById('cash-change-usd').innerText = "$0.00";
+            document.getElementById('cash-change-khr').innerText = "0 ៛";
+
+            selectPaymentMethod('Cash');
+            toggleDraftModal(false);
+            togglePaymentModal(true);
+        }
+
+        function togglePaymentModal(show) {
+            const modal = document.getElementById('payment-modal');
+            const content = document.getElementById('payment-modal-content');
+            if (show) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('translate-y-full');
+                content.classList.add('translate-y-0');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.remove('translate-y-0');
+                content.classList.add('translate-y-full');
+            }
+        }
+
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+
+            document.getElementById('pay-btn-cash').className = "border-2 rounded-xl p-2.5 flex flex-col items-center gap-1 transition " + (method === 'Cash' ? 'border-primary bg-emerald-50/50 text-secondary' : 'border-gray-100 bg-white text-secondary');
+            document.getElementById('pay-btn-khqr').className = "border-2 rounded-xl p-2.5 flex flex-col items-center gap-1 transition " + (method === 'KHQR' ? 'border-primary bg-emerald-50/50 text-secondary' : 'border-gray-100 bg-white text-secondary');
+            document.getElementById('pay-btn-card').className = "border-2 rounded-xl p-2.5 flex flex-col items-center gap-1 transition " + (method === 'Card' ? 'border-primary bg-emerald-50/50 text-secondary' : 'border-gray-100 bg-white text-secondary');
+
+            if (method === 'Cash') {
+                document.getElementById('payment-cash-section').classList.remove('hidden');
+                document.getElementById('payment-khqr-section').classList.add('hidden');
+                document.getElementById('payment-card-section').classList.add('hidden');
+                toggleCashCurrency(selectedCashCurrency);
+            } else if (method === 'KHQR') {
+                document.getElementById('payment-cash-section').classList.add('hidden');
+                document.getElementById('payment-khqr-section').classList.remove('hidden');
+                document.getElementById('payment-card-section').classList.add('hidden');
+            } else {
+                document.getElementById('payment-cash-section').classList.add('hidden');
+                document.getElementById('payment-khqr-section').classList.add('hidden');
+                document.getElementById('payment-card-section').classList.remove('hidden');
+            }
+        }
+
+        function toggleCashCurrency(currency) {
+            selectedCashCurrency = currency;
+            const receivedLabel = document.getElementById('received-label');
+            const cashInput = document.getElementById('cash-received-input');
+
+            if (currency === 'USD') {
+                receivedLabel.innerText = "ប្រាក់ទទួលបាន ($) *";
+                cashInput.placeholder = "0.00";
+            } else {
+                receivedLabel.innerText = "ប្រាក់ទទួលបាន (៛) *";
+                cashInput.placeholder = "0";
+            }
+
+            renderQuickCashShortcuts();
+            calculateCambodianChange();
+        }
+
+        function renderQuickCashShortcuts() {
+            const container = document.getElementById('quick-cash-container');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            const shortcuts = selectedCashCurrency === 'USD'
+                ? [5, 10, 20, 50, 100]
+                : [10000, 20000, 50000, 100000];
+
+            shortcuts.forEach(amt => {
+                const btn = document.createElement('button');
+                btn.type = "button";
+                btn.onclick = () => applyQuickCash(amt);
+                btn.className = "shrink-0 px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-[10px] font-bold rounded-lg shadow-sm active:scale-95 transition";
+                btn.innerText = selectedCashCurrency === 'USD' ? `$${amt}` : `${amt.toLocaleString()} ៛`;
+                container.appendChild(btn);
+            });
+        }
+
+        function applyQuickCash(amount) {
+            document.getElementById('cash-received-input').value = amount;
+            calculateCambodianChange();
+        }
+
+        function calculateCambodianChange() {
+            const receivedInput = parseFloat(document.getElementById('cash-received-input').value) || 0;
+            const changeUsdDisplay = document.getElementById('cash-change-usd');
+            const changeKhrDisplay = document.getElementById('cash-change-khr');
+
+            let receivedInUSD = 0;
+            if (selectedCashCurrency === 'USD') {
+                receivedInUSD = receivedInput;
+            } else {
+                receivedInUSD = receivedInput / EXCHANGE_RATE;
+            }
+
+            const changeUSD = receivedInUSD - finalAmountToPayUSD;
+
+            if (changeUSD < 0) {
+                changeUsdDisplay.innerText = "មិនគ្រប់គ្រាន់";
+                changeUsdDisplay.className = "text-xs font-extrabold text-red-500 leading-tight";
+                changeKhrDisplay.innerText = "0 ៛";
+            } else {
+                const changeKHR = Math.round(changeUSD * EXCHANGE_RATE);
+                changeUsdDisplay.innerText = `$${changeUSD.toFixed(2)}`;
+                changeUsdDisplay.className = "text-xs font-extrabold text-emerald-600 leading-tight";
+                changeKhrDisplay.innerText = `${changeKHR.toLocaleString()} ៛`;
+            }
+        }
+
+        function submitFinalCheckout() {
+            const receivedInput = parseFloat(document.getElementById('cash-received-input').value) || 0;
+            let receivedInUSD = 0;
+
+            if (selectedPaymentMethod === 'Cash') {
+                if (selectedCashCurrency === 'USD') {
+                    receivedInUSD = receivedInput;
+                } else {
+                    receivedInUSD = receivedInput / EXCHANGE_RATE;
+                }
+
+                if (receivedInUSD < finalAmountToPayUSD) {
+                    showToast("ប្រាក់ដែលទទួលបានមិនគ្រប់គ្រាន់ទេ!", "❌");
+                    return;
+                }
+            } else {
+                receivedInUSD = finalAmountToPayUSD;
+            }
+
+            let subtotal = 0;
+            let totalCost = 0;
+            let totalItems = 0;
+
+            Object.keys(cart).forEach(productId => {
+                const item = cart[productId];
+                subtotal += (item.qty * item.product.price);
+                totalCost += (item.qty * item.product.cost);
+                totalItems += item.qty;
+
+                const realProduct = products.find(p => p.id == productId);
+                if (realProduct) {
+                    realProduct.stock -= item.qty;
+                }
+            });
+
+            let discount = 0;
+            let customerObj = null;
+            if (selectedCustomerId) {
+                customerObj = customers.find(c => c.id === selectedCustomerId);
+                if (customerObj) {
+                    discount = subtotal * 0.05;
+                    customerObj.points += Math.floor(subtotal - discount);
+                }
+            }
+
+            const finalAmount = subtotal - discount;
+            const newInvoiceId = 1000 + salesHistory.length + 1;
+            const dateStr = new Date().toLocaleString('km-KH', { hour12: false }).replace(',', '');
+
+            salesHistory.push({
+                id: newInvoiceId,
+                date: dateStr,
+                finalAmount: finalAmount,
+                cost: totalCost,
+                itemsCount: totalItems,
+                method: selectedPaymentMethod
+            });
+
+            const paper = document.getElementById('receipt-paper');
+            let itemsHtml = '';
+            
+            Object.values(cart).forEach(item => {
+                const rowTotal = item.qty * item.product.price;
+                itemsHtml += `
+                    <div class="flex justify-between text-xs text-gray-600">
+                        <span>${item.product.name} x${item.qty}</span>
+                        <span>$${rowTotal.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+
+            const changeUSD = receivedInUSD - finalAmount;
+            const changeKHR = Math.round(changeUSD * EXCHANGE_RATE);
+
+            paper.innerHTML = `
+                <div class="text-center space-y-1">
+                    <div class="text-3xl">🏪</div>
+                    <h2 class="text-sm font-bold text-secondary">Heang Kimhay Retail Shop</h2>
+                    <p class="text-[9px] text-gray-400">អាសយដ្ឋាន៖ ភ្នំពេញ, ប្រទេសកម្ពុជា</p>
+                    <p class="text-[9px] text-gray-400">ទូរស័ព្ទ៖ 012 345 678</p>
+                    <span class="text-emerald-600 font-bold uppercase text-[9px] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 mt-2 inline-block">✅ វិក្កយបត្រផ្លូវការ (Official Receipt)</span>
+                </div>
+
+                <div class="border-t border-dashed border-gray-200 pt-3 space-y-1 text-[9px] text-gray-500">
+                    <div class="flex justify-between">
+                        <span>លេខវិក្កយបត្រ៖ #${newInvoiceId}</span>
+                        <span>បុគ្គលិក៖ ចាន់ នី</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>កាលបរិច្ឆេទ៖ ${dateStr}</span>
+                        <span>វិធីទូទាត់៖ ${selectedPaymentMethod}</span>
+                    </div>
+                </div>
+
+                <div class="border-t border-dashed border-gray-200 py-3 space-y-2">
+                    ${itemsHtml}
+                </div>
+
+                <div class="border-t border-dashed border-gray-200 pt-3 space-y-1 text-xs">
+                    <div class="flex justify-between text-gray-500">
+                        <span>សរុបដើម៖</span>
+                        <span>$${subtotal.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between text-red-500">
+                        <span>បញ្ចុះតម្លៃ៖</span>
+                        <span>-$${discount.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-sm text-secondary pt-1 border-t border-gray-100">
+                        <span>សរុបទូទាត់ ($)៖</span>
+                        <span class="text-primary">$${finalAmount.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-xs text-amber-600">
+                        <span>សរុបទូទាត់ (៛)៖</span>
+                        <span>${(finalAmount * EXCHANGE_RATE).toLocaleString()} ៛</span>
+                    </div>
+                </div>
+
+                <div class="border-t border-dashed border-gray-100 pt-2 space-y-1 text-[10px] text-gray-500">
+                    <div class="flex justify-between">
+                        <span>ទទួលបាន៖</span>
+                        <span>${selectedCashCurrency === 'USD' ? '$' + receivedInput.toFixed(2) : receivedInput.toLocaleString() + ' ៛'}</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-red-600">
+                        <span>ប្រាក់អាប់ ($)៖</span>
+                        <span>$${changeUSD.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-red-600">
+                        <span>ប្រាក់អាប់ (៛)៖</span>
+                        <span>${changeKHR.toLocaleString()} ៛</span>
+                    </div>
+                </div>
+
+                ${customerObj ? `
+                    <div class="bg-gray-50 p-2.5 rounded-xl text-[9px] text-gray-500 space-y-0.5 border border-gray-100 mt-2">
+                        <p class="font-bold">ព័ត៌មានសមាជិក៖</p>
+                        <div class="flex justify-between">
+                            <span>ឈ្មោះ៖ ${customerObj.name}</span>
+                            <span>លេខទូរស័ព្ទ៖ ${customerObj.phone}</span>
+                        </div>
+                        <p class="text-primary font-bold">ពិន្ទុសន្សំបច្ចុប្បន្ន៖ 🌟 ${customerObj.points} ពិន្ទុ</p>
+                    </div>
+                ` : ''}
+
+                ${selectedPaymentMethod === 'KHQR' ? `
+                    <div class="flex flex-col items-center justify-center pt-3 border-t border-dashed border-gray-200">
+                        <div class="w-24 h-24 bg-white border-4 border-red-500 rounded-2xl flex items-center justify-center p-1 relative shadow-inner">
+                            <div class="w-full h-full bg-slate-900 flex items-center justify-center text-white text-[7px] text-center font-mono">
+                                KHQR PAID
+                            </div>
+                            <div class="absolute w-5 h-5 bg-red-600 border border-white rounded-md flex items-center justify-center text-[7px] font-bold text-white">
+                                KH
+                            </div>
+                        </div>
+                        <p class="text-[8px] text-gray-400 mt-1 font-semibold">ស្កេនទូទាត់ប្រាក់តាម KHQR រួចរាល់</p>
+                    </div>
+                ` : `
+                    <div class="text-center pt-3 border-t border-dashed border-gray-200">
+                        <p class="text-[9px] text-gray-500 font-bold">សូមអរគុណ! សូមអញ្ជើញមកម្តងទៀត!</p>
+                    </div>
+                `}
+            `;
+
+            togglePaymentModal(false);
+            cart = {};
+            selectedCustomerId = null;
+            document.getElementById('checkout-customer-select').value = "";
+            updateCartBadge();
+            renderPOSProducts();
+            renderStockProducts();
+            renderCustomersList();
+            toggleReceiptModal(true);
+            showToast("ទូទាត់ការលក់ជោគជ័យ!", "✅");
+        }
+
+        function closeReceiptModal() {
+            toggleReceiptModal(false);
+        }
+
+        function simulatePrint() {
+            showToast("កំពុងភ្ជាប់ទៅម៉ាស៊ីនបោះពុម្ពវិក្កយបត្រ Bluetooth...", "🖨️");
+        }
+
+        function renderReports() {
+            let totalSales = 0;
+            let totalCost = 0;
+            let salesCount = salesHistory.length;
+
+            let paymentMethods = { 'Cash': 0, 'KHQR': 0, 'Card': 0 };
+
+            salesHistory.forEach(s => {
+                totalSales += s.finalAmount;
+                totalCost += s.cost;
+                paymentMethods[s.method] = (paymentMethods[s.method] || 0) + s.finalAmount;
+            });
+
+            let profit = totalSales - totalCost;
+            let profitRate = totalSales > 0 ? (profit / totalSales) * 100 : 0;
+
+            document.getElementById('report-sales-total').innerText = `$${totalSales.toFixed(2)}`;
+            document.getElementById('report-sales-count').innerText = `ចំនួនលក់៖ ${salesCount} ដង`;
+            document.getElementById('report-profit-total').innerText = `$${profit.toFixed(2)}`;
+            document.getElementById('report-profit-rate').innerText = `ភាគរយចំណេញ៖ ${profitRate.toFixed(0)}%`;
+
+            const chartContainer = document.getElementById('payment-chart-container');
+            if (chartContainer) {
+                chartContainer.innerHTML = '';
+                Object.keys(paymentMethods).forEach(m => {
+                    const amt = paymentMethods[m];
+                    const pct = totalSales > 0 ? (amt / totalSales) * 100 : 0;
+                    
+                    const bar = document.createElement('div');
+                    bar.className = "space-y-1";
+                    bar.innerHTML = `
+                        <div class="flex justify-between text-[10px] font-semibold text-gray-600">
+                            <span>${m === 'Cash' ? '💵 លុយសុទ្ធ' : m === 'KHQR' ? '📲 KHQR' : '💳 កាត'}</span>
+                            <span>$${amt.toFixed(2)} (${pct.toFixed(0)}%)</span>
+                        </div>
+                        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-primary h-full rounded-full" style="width: ${pct}%"></div>
+                        </div>
+                    `;
+                    chartContainer.appendChild(bar);
+                });
+            }
+
+            const topList = document.getElementById('top-selling-list');
+            if (topList) {
+                topList.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-[10px] font-semibold text-gray-600">
+                            <span>🥤 Coca-Cola (លក់ដាច់ជាងគេ)</span>
+                            <span>លក់បាន ៨ កំប៉ុង</span>
+                        </div>
+                        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-indigo-500 h-full rounded-full" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-[10px] font-semibold text-gray-600">
+                            <span>💧 ទឹកបរិសុទ្ធ វីតាល់</span>
+                            <span>លក់បាន ៥ ដប</span>
+                        </div>
+                        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-indigo-400 h-full rounded-full" style="width: 50%"></div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function generateOfficialReportSheet() {
+            const type = document.getElementById('report-sheet-type').value;
+            const fromDateStr = document.getElementById('report-from-date').value;
+            const toDateStr = document.getElementById('report-to-date').value;
+            const container = document.getElementById('report-printable-area');
+
+            const dateGeneratedStr = new Date().toLocaleString('km-KH', { hour12: false }).replace(',', '');
+
+            if (type === 'sales') {
+                if (!fromDateStr || !toDateStr) {
+                    showToast("សូមជ្រើសរើសកាលបរិច្ឆេទឱ្យបានត្រឹមត្រូវ!", "⚠️");
+                    return;
+                }
+
+                const fromTime = new Date(fromDateStr).setHours(0,0,0,0);
+                const toTime = new Date(toDateStr).setHours(23,59,59,999);
+
+                const filteredSales = salesHistory.filter(sale => {
+                    const parts = sale.date.split(' ');
+                    const saleDate = parts[0]; 
+                    const saleTime = new Date(saleDate).getTime();
+                    return saleTime >= fromTime && saleTime <= toTime;
+                });
+
+                if (filteredSales.length === 0) {
+                    showToast("គ្មានទិន្នន័យលក់នៅក្នុងកាលបរិច្ឆេទដែលបានរើសឡើយ!", "ℹ️");
+                    return;
+                }
+
+                let totalRevenue = 0;
+                let totalCost = 0;
+                let totalItems = 0;
+                let rowsHtml = '';
+
+                filteredSales.forEach((s, idx) => {
+                    totalRevenue += s.finalAmount;
+                    totalCost += s.cost;
+                    totalItems += s.itemsCount;
+                    const profit = s.finalAmount - s.cost;
+
+                    rowsHtml += `
+                        <tr class="border-b border-gray-200 hover:bg-gray-50 text-[10px]">
+                            <td class="py-2 px-3 text-center font-bold font-mono">${idx + 1}</td>
+                            <td class="py-2 px-3 text-center font-bold text-gray-700 font-mono">#${s.id}</td>
+                            <td class="py-2 px-3 text-center text-gray-600 font-mono">${s.date}</td>
+                            <td class="py-2 px-3 text-center font-bold text-gray-600">${s.method}</td>
+                            <td class="py-2 px-3 text-center font-mono">${s.itemsCount}</td>
+                            <td class="py-2 px-3 text-right font-bold text-gray-700">$${s.finalAmount.toFixed(2)}</td>
+                            <td class="py-2 px-3 text-right text-gray-500">$${s.cost.toFixed(2)}</td>
+                            <td class="py-2 px-3 text-right font-bold text-primary">$${profit.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+
+                const totalProfit = totalRevenue - totalCost;
+                const marginRate = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+
+                container.innerHTML = `
+                    <div class="flex justify-between items-start border-b-2 border-gray-800 pb-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-3xl">🏪</span>
+                                <span class="text-base font-extrabold text-secondary">Heang Kimhay Retail Shop</span>
+                            </div>
+                            <p class="text-[10px] text-gray-500">អាសយដ្ឋាន៖ រាជធានីភ្នំពេញ, ព្រះរាជាណាចក្រកម្ពុជា</p>
+                            <p class="text-[10px] text-gray-500">លេខទូរស័ព្ទ៖ 012 345 678 / 098 765 432</p>
+                        </div>
+                        <div class="text-right space-y-1">
+                            <h2 class="text-base font-extrabold text-secondary tracking-wide">សន្លឹករបាយការណ៍លក់រួម</h2>
+                            <p class="text-[9px] bg-slate-100 text-slate-800 font-semibold px-2.5 py-1 rounded inline-block">Combined Sales Sheet</p>
+                            <p class="text-[9px] text-gray-400 mt-1">ចាប់ពីថ្ងៃ៖ <span class="font-bold text-gray-600">${fromDateStr}</span> ដល់៖ <span class="font-bold text-gray-600">${toDateStr}</span></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 text-[10px] text-gray-500 border-b border-dashed border-gray-200 pb-3 mt-3">
+                        <div>
+                            <p>កាលបរិច្ឆេទបង្កើតសន្លឹក៖ <span class="font-bold text-gray-700">${dateGeneratedStr}</span></p>
+                            <p>បង្កើតឡើងដោយបុគ្គលិក៖ <span class="font-bold text-gray-700">ចាន់ នី (គណនីគិតលុយ)</span></p>
+                        </div>
+                        <div class="text-right">
+                            <p>ស្ថានភាពទិន្នន័យ៖ <span class="text-emerald-600 font-bold">● Local Database (សុក្រឹត)</span></p>
+                            <p>ចំនួនប្រតិបត្តិការសរុប៖ <span class="font-bold text-gray-700">${filteredSales.length} វិក្កយបត្រ</span></p>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto mt-4">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-700 border-b border-gray-300 text-[10px] font-bold">
+                                    <th class="py-2.5 px-3 text-center">ល.រ</th>
+                                    <th class="py-2.5 px-3 text-center">លេខវិក្កយបត្រ</th>
+                                    <th class="py-2.5 px-3 text-center">កាលបរិច្ឆេទលក់</th>
+                                    <th class="py-2.5 px-3 text-center">វិធីទូទាត់</th>
+                                    <th class="py-2.5 px-3 text-center">ទំនិញសរុប</th>
+                                    <th class="py-2.5 px-3 text-right">តម្លៃលក់សរុប ($)</th>
+                                    <th class="py-2.5 px-3 text-right">ថ្លៃដើមទំនិញ ($)</th>
+                                    <th class="py-2.5 px-3 text-right">ចំណេញដុល ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="flex justify-end pt-2 mt-4">
+                        <div class="w-full sm:w-80 bg-gray-50 rounded-2xl p-4 border border-gray-100 space-y-2 text-xs">
+                            <div class="flex justify-between text-gray-500">
+                                <span>លក់បានទំនិញសរុប៖</span>
+                                <span class="font-bold text-gray-700 font-mono">${totalItems} មុខ</span>
+                            </div>
+                            <div class="flex justify-between text-gray-500">
+                                <span>ចំណូលលក់សរុប (Revenue)៖</span>
+                                <span class="font-bold text-gray-800 font-mono">$${totalRevenue.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between text-gray-500">
+                                <span>ថ្លៃដើមទំនិញរួម (COGS)៖</span>
+                                <span class="font-bold text-gray-700 font-mono">$${totalCost.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600 font-bold border-t border-gray-200 pt-2 text-sm">
+                                <span>ចំណេញដុលសរុប (Profit)៖</span>
+                                <span class="text-primary font-mono">$${totalProfit.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between text-gray-400 text-[10px] font-bold pt-1">
+                                <span>ភាគរយចំណេញដុល (Margin)៖</span>
+                                <span class="text-emerald-600 font-mono">${marginRate.toFixed(1)}%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-10 pt-10 text-center text-xs mt-10">
+                        <div class="space-y-16">
+                            <p class="text-gray-500">អ្នករៀបចំរបាយការណ៍ (Prepared By)</p>
+                            <div>
+                                <p class="font-bold text-gray-700">ចាន់ នី</p>
+                                <p class="text-[10px] text-gray-400">កាលបរិច្ឆេទ៖ ........................</p>
+                            </div>
+                        </div>
+                        <div class="space-y-16">
+                            <p class="text-gray-500">ហត្ថលេខាម្ចាស់ហាង (Approved By)</p>
+                            <div>
+                                <p class="font-bold text-gray-700">ហ៊ាង គីមហៃ</p>
+                                <p class="text-[10px] text-gray-400">កាលបរិច្ឆេទ៖ ........................</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                let totalItemsCount = products.length;
+                let totalStockQty = 0;
+                let totalCostValue = 0;
+                let totalRetailValue = 0;
+                let rowsHtml = '';
+
+                products.forEach((p, idx) => {
+                    const isLow = p.stock <= p.lowLimit;
+                    const wac = getProductWAC(p.id);
+                    const costVal = p.stock * wac;
+                    const retailVal = p.stock * p.price;
+
+                    totalStockQty += p.stock;
+                    totalCostValue += costVal;
+                    totalRetailValue += retailVal;
+
+                    rowsHtml += `
+                        <tr class="border-b border-gray-200 hover:bg-gray-50 text-[10px]">
+                            <td class="py-2 px-3 text-center font-bold font-mono">${idx + 1}</td>
+                            <td class="py-2 px-3 text-center font-mono">${p.sku}</td>
+                            <td class="py-2 px-3 font-semibold text-gray-700">${p.emoji} ${p.name}</td>
+                            <td class="py-2 px-3 text-center text-gray-500">${categories[p.categoryId] || 'ផ្សេងៗ'}</td>
+                            <td class="py-2 px-3 text-right font-mono">$${wac.toFixed(2)}</td>
+                            <td class="py-2 px-3 text-right font-mono">$${p.price.toFixed(2)}</td>
+                            <td class="py-2 px-3 text-center font-bold ${isLow ? 'text-red-600 bg-red-50/50' : 'text-gray-800'} font-mono">${p.stock}</td>
+                            <td class="py-2 px-3 text-right text-gray-600 font-mono">$${costVal.toFixed(2)}</td>
+                            <td class="py-2 px-3 text-right font-bold text-primary font-mono">$${retailVal.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+
+                const totalPotentialMargin = totalRetailValue - totalCostValue;
+                const marginRate = totalRetailValue > 0 ? (totalPotentialMargin / totalRetailValue) * 100 : 0;
+
+                container.innerHTML = `
+                    <div class="flex justify-between items-start border-b-2 border-gray-800 pb-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-3xl">🏪</span>
+                                <span class="text-base font-extrabold text-secondary">Heang Kimhay Retail Shop</span>
+                            </div>
+                            <p class="text-[10px] text-gray-500">អាសយដ្ឋាន៖ រាជធានីភ្នំពេញ, ព្រះរាជាណាក្រកម្ពុជា</p>
+                            <p class="text-[10px] text-gray-500">លេខទូរស័ព្ទ៖ 012 345 678 / 098 765 432</p>
+                        </div>
+                        <div class="text-right space-y-1">
+                            <h2 class="text-base font-extrabold text-secondary tracking-wide">សន្លឹករបាយការណ៍ស្តុកទំនិញ</h2>
+                            <p class="text-[9px] bg-indigo-100 text-indigo-800 font-semibold px-2.5 py-1 rounded inline-block">Inventory Balance Sheet</p>
+                            <p class="text-[9px] text-gray-400 mt-1">គិតត្រឹមថ្ងៃខែម៉ោង៖ <span class="font-bold text-gray-600">${dateGeneratedStr}</span></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 text-[10px] text-gray-500 border-b border-dashed border-gray-200 pb-3 mt-3">
+                        <div>
+                            <p>បង្កើតឡើងដោយបុគ្គលិកឃ្លាំង៖ <span class="font-bold text-gray-700">កែវ វណ្ណា (Stock Manager)</span></p>
+                            <p>កម្រិតសុវត្ថិភាពទិន្នន័យ៖ <span class="text-emerald-600 font-bold">● Local Memory Sync (ចុងក្រោយ)</span></p>
+                        </div>
+                        <div class="text-right">
+                            <p>ចំនួនមុខទំនិញសរុប (SKUs)៖ <span class="font-bold text-gray-700">${totalItemsCount} មុខ</span></p>
+                            <p>ចំនួនស្តុកទំនិញរួមសរុប៖ <span class="font-bold text-gray-700 font-mono">${totalStockQty} ឯកតា</span></p>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto mt-4">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-700 border-b border-gray-300 text-[10px] font-bold">
+                                    <th class="py-2.5 px-3 text-center">ល.រ</th>
+                                    <th class="py-2.5 px-3 text-center">កូដ SKU</th>
+                                    <th class="py-2.5 px-3">ឈ្មោះផលិតផល</th>
+                                    <th class="py-2.5 px-3 text-center">ប្រភេទក្រុម</th>
+                                    <th class="py-2.5 px-3 text-right">ថ្លៃដើម ($)</th>
+                                    <th class="py-2.5 px-3 text-right">តម្លៃលក់ ($)</th>
+                                    <th class="py-2.5 px-3 text-center">ក្នុងស្តុក</th>
+                                    <th class="py-2.5 px-3 text-right">ទុនស្តុកសរុប ($)</th>
+                                    <th class="py-2.5 px-3 text-right">តម្លៃលក់សរុប ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="flex justify-end pt-2 mt-4">
+                        <div class="w-full sm:w-80 bg-gray-50 rounded-2xl p-4 border border-gray-100 space-y-2 text-xs">
+                            <div class="flex justify-between text-gray-500">
+                                <span>ទុនស្តុកសរុប (Total Cost Value)៖</span>
+                                <span class="font-bold text-gray-800 font-mono">$${totalCostValue.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between text-gray-500">
+                                <span>តម្លៃលក់រំពឹងទុក (Retail Value)៖</span>
+                                <span class="font-bold text-gray-800 font-mono">$${totalRetailValue.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600 font-bold border-t border-gray-200 pt-2 text-sm">
+                                <span>ប្រាក់ចំណេញរំពឹងទុក (Gross Profit)៖</span>
+                                <span class="text-primary font-mono">$${totalPotentialMargin.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between text-gray-400 text-[10px] font-bold pt-1">
+                                <span>ភាគរយចំណេញរំពឹងទុក៖</span>
+                                <span class="text-emerald-600 font-mono">${marginRate.toFixed(1)}%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-10 pt-10 text-center text-xs mt-10">
+                        <div class="space-y-16">
+                            <p class="text-gray-500">បុគ្គលិកគ្រប់គ្រងឃ្លាំង (Prepared By)</p>
+                            <div>
+                                <p class="font-bold text-gray-700">កែវ វណ្ណា</p>
+                                <p class="text-[10px] text-gray-400">កាលបរិច្ឆេទ៖ ........................</p>
+                            </div>
+                        </div>
+                        <div class="space-y-16">
+                            <p class="text-gray-500">ហត្ថលេខាម្ចាស់ហាង (Approved By)</p>
+                            <div>
+                                <p class="font-bold text-gray-700">ហ៊ាង គីមហៃ</p>
+                                <p class="text-[10px] text-gray-400">កាលបរិច្ឆេទ៖ ........................</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            toggleReportSheetModal(true);
+        }
+
+        function openNewProductModal() {
+            toggleNewProductModal(true);
+        }
+
+        function toggleNewProductModal(show) {
+            const modal = document.getElementById('new-product-modal');
+            const content = document.getElementById('new-product-modal-content');
+            if (show) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-90');
+            }
+        }
+
+        function saveNewProduct() {
+            const name = document.getElementById('new-prod-name').value.trim();
+            const barcode = document.getElementById('new-prod-barcode').value.trim();
+            const sku = document.getElementById('new-prod-sku').value.trim();
+            const categoryId = document.getElementById('new-prod-category').value;
+            const emoji = document.getElementById('new-prod-emoji').value.trim() || '📦';
+            const cost = parseFloat(document.getElementById('new-prod-cost').value) || 0;
+            const price = parseFloat(document.getElementById('new-prod-price').value) || 0;
+            const stock = parseInt(document.getElementById('new-prod-stock').value) || 0;
+            const lowLimit = parseInt(document.getElementById('new-prod-low-limit').value) || 0;
+
+            if (!name || !barcode || !sku || cost <= 0 || price <= 0 || stock < 0 || lowLimit < 0) {
+                showToast("សូមបំពេញព័ត៌មាន និងតម្លៃឱ្យបានត្រឹមត្រូវ!", "❌");
+                return;
+            }
+
+            const isDuplicate = products.some(p => p.barcode === barcode || p.sku === sku);
+            if (isDuplicate) {
+                showToast("បាកូដ ឬ SKU នេះធ្លាប់មានរួចហើយ!", "⚠️");
+                return;
+            }
+
+            const newId = products.length + 1;
+            const newProd = {
+                id: newId,
+                barcode: barcode,
+                sku: sku,
+                name: name,
+                categoryId: categoryId,
+                cost: cost,
+                price: price,
+                stock: stock,
+                lowLimit: lowLimit,
+                emoji: emoji
+            };
+
+            products.push(newProd);
+
+            const dateStr = new Date().toLocaleString('km-KH', { hour12: false }).replace(',', '');
+            stockTransactions.push({
+                id: stockTransactions.length + 1,
+                productId: newId,
+                date: dateStr,
+                type: 'IN',
+                qty: stock,
+                cost: cost,
+                note: "បើកហាងដំបូង / បង្កើតទំនិញថ្មី",
+                voided: false
+            });
+
+            showToast(`បានបង្កើតទំនិញ "${name}" ដោយជោគជ័យ`, "✅");
+            toggleNewProductModal(false);
+            
+            document.getElementById('new-prod-name').value = "";
+            document.getElementById('new-prod-barcode').value = "";
+            document.getElementById('new-prod-sku').value = "";
+            document.getElementById('new-prod-emoji').value = "📦";
+            document.getElementById('new-prod-cost').value = "0.30";
+            document.getElementById('new-prod-price').value = "0.50";
+            document.getElementById('new-prod-stock').value = "50";
+            document.getElementById('new-prod-low-limit').value = "10";
+
+            renderStockProducts();
+            renderPOSProducts();
+        }
+
+        function openBulkPriceModal() {
+            const list = document.getElementById('bulk-price-items-list');
+            if (!list) return;
+            list.innerHTML = '';
+
+            products.forEach(p => {
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center bg-gray-50 p-2 rounded-xl border border-gray-100 gap-2";
+                item.innerHTML = `
+                    <div class="flex items-center gap-2 min-w-0 flex-1">
+                        <span class="text-lg shrink-0">${p.emoji}</span>
+                        <span class="text-[10px] font-bold truncate">${p.name}</span>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <span class="text-[9px] text-gray-400 font-bold">$</span>
+                        <input type="number" step="0.01" value="${p.price.toFixed(2)}" data-id="${p.id}" class="bulk-price-input w-16 py-1 text-center font-bold text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary bg-white text-primary">
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+
+            toggleBulkPriceModal(true);
+        }
+
+        function toggleBulkPriceModal(show) {
+            const modal = document.getElementById('bulk-price-modal');
+            const content = document.getElementById('bulk-price-modal-content');
+            if (show) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-90');
+            }
+        }
+
+        function applyBulkMathAdjustment() {
+            const type = document.getElementById('bulk-adjust-type').value;
+            const adjustVal = parseFloat(document.getElementById('bulk-adjust-value').value) || 0;
+
+            if (adjustVal <= 0) {
+                showToast("សូមបញ្ចូលតម្លៃសម្រាប់គណនា!", "❌");
+                return;
+            }
+
+            const inputs = document.querySelectorAll('.bulk-price-input');
+            inputs.forEach(input => {
+                const currentVal = parseFloat(input.value) || 0;
+                let newVal = currentVal;
+
+                if (type === 'pct_up') {
+                    newVal = currentVal * (1 + (adjustVal / 100));
+                } else if (type === 'pct_down') {
+                    newVal = currentVal * (1 - (adjustVal / 100));
+                } else if (type === 'val_up') {
+                    newVal = currentVal + adjustVal;
+                } else if (type === 'val_down') {
+                    newVal = currentVal - adjustVal;
+                }
+
+                newVal = Math.max(0.01, newVal); 
+                input.value = newVal.toFixed(2);
+            });
+
+            showToast("បានអនុវត្តរូបមន្តគណនាជាបណ្ដោះអាសន្ន", "⚡");
+        }
+
+        function saveBulkPriceChanges() {
+            const inputs = document.querySelectorAll('.bulk-price-input');
+            let updatedCount = 0;
+
+            inputs.forEach(input => {
+                const prodId = parseInt(input.getAttribute('data-id'));
+                const newPrice = parseFloat(input.value) || 0;
+                const p = products.find(prod => prod.id === prodId);
+
+                if (p && newPrice > 0) {
+                    p.price = newPrice;
+                    updatedCount++;
+                }
+            });
+
+            showToast(`បានរក្សាទុកតម្លៃលក់ថ្មីចំនួន ${updatedCount} មុខទំនិញ`, "✅");
+            toggleBulkPriceModal(false);
+            renderStockProducts();
+            renderPOSProducts();
+        }
+
+        function openProductEditModal(productId) {
+            const p = products.find(prod => prod.id === productId);
+            if (!p) return;
+
+            document.getElementById('edit-prod-id').value = productId;
+            document.getElementById('edit-prod-name').value = p.name;
+            document.getElementById('edit-prod-barcode').value = p.barcode;
+            document.getElementById('edit-prod-sku').value = p.sku;
+            document.getElementById('edit-prod-price').value = p.price.toFixed(2);
+            document.getElementById('edit-prod-low-limit').value = p.lowLimit;
+
+            const wac = getProductWAC(productId);
+            document.getElementById('edit-prod-cost-display').innerText = `$${wac.toFixed(2)}`;
+            document.getElementById('edit-prod-stock-display').innerText = p.stock;
+
+            toggleProductEditModal(true);
+        }
+
+        function toggleProductEditModal(show) {
+            const modal = document.getElementById('product-edit-modal');
+            const content = document.getElementById('product-edit-modal-content');
+            if (show) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-90');
+            }
+        }
+
+        function saveProductDetails() {
+            const id = parseInt(document.getElementById('edit-prod-id').value);
+            const p = products.find(prod => prod.id === id);
+            if (!p) return;
+
+            const name = document.getElementById('edit-prod-name').value.trim();
+            const barcode = document.getElementById('edit-prod-barcode').value.trim();
+            const sku = document.getElementById('edit-prod-sku').value.trim();
+            const price = parseFloat(document.getElementById('edit-prod-price').value) || 0;
+            const lowLimit = parseInt(document.getElementById('edit-prod-low-limit').value) || 0;
+
+            if (!name || !barcode || !sku || price <= 0 || lowLimit < 0) {
+                showToast("សូមបញ្ចូលព័ត៌មានឱ្យបានត្រឹមត្រូវ!", "❌");
+                return;
+            }
+
+            const isDuplicate = products.some(prod => prod.id !== id && (prod.barcode === barcode || prod.sku === sku));
+            if (isDuplicate) {
+                showToast("បាកូដ ឬ SKU នេះត្រូវបានប្រើប្រាស់រួចហើយ!", "⚠️");
+                return;
+            }
+
+            p.name = name;
+            p.barcode = barcode;
+            p.sku = sku;
+            p.price = price;
+            p.lowLimit = lowLimit;
+
+            showToast("បានកែសម្រួលព័ត៌មានទំនិញរួចរាល់", "✅");
+            toggleProductEditModal(false);
+            renderStockProducts();
+            renderPOSProducts();
+        }
+
+        function toggleReceiptModal(show) {
+            const modal = document.getElementById('receipt-modal');
+            const content = document.getElementById('receipt-modal-content');
+            if (show) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-90');
+            }
+        }
+    </script>
+</body>
+</html>
