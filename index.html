@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heang Kimhay Retail Shop - Mobile Management System</title>
+    <title>Heang Kimhay Retail Shop - ទម្រង់ទូរស័ព្ទដៃ</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- HTML5-QRCODE Library for Mobile Camera Barcode Scanning -->
@@ -632,7 +632,7 @@
                 <div id="inbound-subview-history" class="space-y-2.5 hidden">
                     <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">បញ្ជីប្រតិបត្តិការស្តុកកន្លងមក៖</p>
                     <div class="space-y-2" id="inbound-history-list">
-                        <!-- ប្រវត្តិស្តុកនឹងត្រូវចាក់ដោយ JS -->
+                        <!-- ចាក់ប្រវត្តិស្តុក IN/ADJ ដោយ JS -->
                     </div>
                 </div>
 
@@ -838,9 +838,9 @@
         </div>
     </div>
 
-    <!-- ១១. ផ្ទាំងស្កែនបាកូដកាមេរ៉ា (Camera Scanner Modal with Focus Frame) -->
-    <div id="scanner-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-[95] opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden flex flex-col transform scale-90 transition-transform duration-300 shadow-2xl" id="scanner-modal-content">
+    <!-- ១១. ផ្ទាំងស្កែនបាកូដកាមេរ៉ា (Camera Scanner Modal with Focus Frame & Debug System) -->
+    <div id="scanner-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[95] opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden flex flex-col transform scale-90 transition-transform duration-300 shadow-2xl animate-fade-in" id="scanner-modal-content">
             <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <span class="text-lg">📷</span>
@@ -849,22 +849,30 @@
                 <button onclick="stopBarcodeScanner()" class="text-gray-400 hover:text-gray-600 text-xl p-1">✕</button>
             </div>
             <div class="p-4 flex flex-col items-center">
+                
+                <!-- ផ្នែកបង្ហាញស្ថានភាពកាមេរ៉ា (Camera Live Status Log) -->
+                <div id="scanner-status-log" class="w-full text-[9px] bg-secondary text-emerald-400 font-mono p-2 rounded-lg mb-3 flex items-center justify-between shadow-inner">
+                    <span>ស្ថានភាព៖ <span id="scanner-status-text" class="text-white">កំពុងផ្ដើម...</span></span>
+                    <span class="w-2 h-2 rounded-full bg-orange-400" id="scanner-status-indicator"></span>
+                </div>
+
                 <!-- Container for HTML5 QR Code Reader -->
-                <div id="scanner-reader-container" class="w-full bg-slate-100 rounded-2xl overflow-hidden aspect-square border border-gray-200 relative flex items-center justify-center">
+                <div id="scanner-reader-container" class="w-full bg-slate-900 rounded-2xl overflow-hidden aspect-square border border-gray-800 relative flex items-center justify-center shadow-lg">
                     <div id="interactive-reader" class="w-full h-full"></div>
                     <!-- Target Area Overlay -->
                     <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
-                        <div class="w-48 h-32 border-2 border-primary rounded-xl relative opacity-65 flex items-center justify-center">
-                            <div class="absolute w-4 h-4 border-t-4 border-l-4 border-primary -top-1 -left-1"></div>
-                            <div class="absolute w-4 h-4 border-t-4 border-r-4 border-primary -top-1 -right-1"></div>
-                            <div class="absolute w-4 h-4 border-b-4 border-l-4 border-primary -bottom-1 -left-1"></div>
-                            <div class="absolute w-4 h-4 border-b-4 border-r-4 border-primary -bottom-1 -right-1"></div>
-                            <div class="w-full h-[1px] bg-red-500 shadow-[0_0_5px_red] animate-pulse"></div>
+                        <div class="w-56 h-36 border-2 border-primary rounded-2xl relative opacity-75 flex items-center justify-center">
+                            <div class="absolute w-5 h-5 border-t-4 border-l-4 border-primary -top-1 -left-1"></div>
+                            <div class="absolute w-5 h-5 border-t-4 border-r-4 border-primary -top-1 -right-1"></div>
+                            <div class="absolute w-5 h-5 border-b-4 border-l-4 border-primary -bottom-1 -left-1"></div>
+                            <div class="absolute w-5 h-5 border-b-4 border-r-4 border-primary -bottom-1 -right-1"></div>
+                            <!-- Line Laser Animation -->
+                            <div class="w-full h-[2px] bg-red-500 shadow-[0_0_8px_rgba(239,68,68,1)] animate-bounce"></div>
                         </div>
                     </div>
                 </div>
                 <p class="text-[10px] text-gray-400 text-center mt-3 leading-normal">សូមយករូបបាកូដទំនិញមកតម្រង់ក្នុងតំបន់គោលដៅឱ្យចំ ដើម្បីស្កែន</p>
-                <div id="scanner-error-message" class="text-[10px] text-red-500 mt-2 hidden text-center max-w-full break-words"></div>
+                <div id="scanner-error-message" class="text-[10px] text-red-500 mt-2 hidden text-center max-w-full break-words bg-red-50 p-2 rounded-xl border border-red-100 font-semibold"></div>
             </div>
             <div class="p-4 bg-gray-50 border-t border-gray-100 flex gap-2">
                 <button onclick="stopBarcodeScanner()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-xl text-xs active:scale-95 transition">
@@ -874,7 +882,19 @@
         </div>
     </div>
 
-    <!-- ១២. ប្រអប់សារដំណឹងជំនួស Alert (Custom Toast Notification) -->
+    <!-- ១២. ផ្ទាំងបញ្ជាក់ប្រតិបត្តិការសាកសួរ (Custom Confirm Modal - replaces alert/confirm dialogs) -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-xs p-5 space-y-4 transform scale-90 transition-transform duration-300 shadow-2xl" id="confirm-modal-content">
+            <h3 class="font-bold text-sm text-secondary" id="confirm-title">បញ្ជាក់ប្រតិបត្តិការ</h3>
+            <p class="text-xs text-gray-500 leading-relaxed" id="confirm-message">តើអ្នកពិតជាចង់ធ្វើសកម្មភាពនេះមែនទេ?</p>
+            <div class="flex gap-2 pt-2">
+                <button id="confirm-cancel-btn" class="flex-1 bg-gray-100 text-gray-600 font-semibold py-2.5 rounded-xl text-xs active:scale-95 transition">បោះបង់</button>
+                <button id="confirm-ok-btn" class="flex-1 bg-red-500 text-white font-bold py-2.5 rounded-xl text-xs shadow-md active:scale-95 transition">យល់ព្រម</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ១៣. ប្រអប់សារដំណឹងជំនួស Alert (Custom Toast Notification) -->
     <div id="toast-notif" class="fixed top-5 left-1/2 -translate-x-1/2 bg-secondary text-white px-4 py-2.5 rounded-xl shadow-2xl text-[11px] font-bold flex items-center gap-2 transform -translate-y-20 opacity-0 transition-all duration-300 z-[100] whitespace-nowrap border border-gray-800">
         <span id="toast-icon">ℹ️</span>
         <span id="toast-message">សារដំណឹង</span>
@@ -1011,15 +1031,60 @@
             }, 2500);
         }
 
+        // ប្រព័ន្ធសួរ تصدیق (Custom Confirm Modal)
+        function showConfirm(title, message, onConfirm) {
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-message').innerText = message;
+            const modal = document.getElementById('confirm-modal');
+            const content = document.getElementById('confirm-modal-content');
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-90');
+            content.classList.add('scale-100');
+
+            document.getElementById('confirm-cancel-btn').onclick = function() {
+                closeConfirm();
+            };
+            document.getElementById('confirm-ok-btn').onclick = function() {
+                closeConfirm();
+                if (onConfirm) onConfirm();
+            };
+        }
+
+        function closeConfirm() {
+            const modal = document.getElementById('confirm-modal');
+            const content = document.getElementById('confirm-modal-content');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+        }
+
+        // សំឡេងប៊ីប (Beep Audio Feedback) ពេលស្កែនជោគជ័យ
+        function playBeepSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "sine";
+                osc.frequency.value = 1100; // 1100Hz frequency
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.15);
+            } catch (e) {
+                console.log("Audio beep unavailable: ", e);
+            }
+        }
+
         // ៣. ប្ដូរទំព័រចម្បង និងប្រព័ន្ធចាក់សោរការពារ (Security Lock & Nav System)
         function switchTab(tabName) {
-            // ប្រសិនបើជាទំព័រ POS (មិនបាច់ចាក់សោរទេ ព្រោះលក់ត្រូវលឿន)
             if (tabName === 'pos') {
                 proceedToTab('pos');
                 return;
             }
 
-            // ប្រសិនបើចង់ចូលទៅទំព័រផ្សេងៗទៀត ត្រូវសួររកលេខ PIN សុវត្ថិភាពជាមុនសិន
             if (config.passcode && config.passcode.trim() !== "") {
                 pendingTabTarget = tabName;
                 openPinLockScreen();
@@ -1055,13 +1120,12 @@
                 cartBar.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
             }
 
-            // ធ្វើបច្ចុប្បន្នភាពទំព័រនីមួយៗ
             if (tabName === 'reports') renderReports();
             if (tabName === 'stock') renderStockProducts();
             if (tabName === 'customers') renderCustomersList();
         }
 
-        // ផ្ទាំងគោះលេខកូដសម្ងាត់ PIN Pad Lock (Security Features)
+        // ផ្ទាំងគោះលេខកូដសម្ងាត់ PIN Pad Lock
         function openPinLockScreen() {
             enteredPin = "";
             updatePinDotsUI();
@@ -1071,7 +1135,6 @@
 
         function cancelPinUnlock() {
             document.getElementById('pin-lock-modal').classList.add('opacity-0', 'pointer-events-none');
-            // ត្រលប់មក POS tab វិញ
             proceedToTab('pos');
         }
 
@@ -1080,7 +1143,6 @@
                 enteredPin += num;
                 updatePinDotsUI();
                 
-                // ផ្ទៀងផ្ទាត់នៅពេលវាយពេញ ៤ ខ្ទង់
                 if (enteredPin.length === 4) {
                     setTimeout(() => {
                         if (enteredPin === config.passcode) {
@@ -1120,7 +1182,6 @@
             }
         }
 
-        // ចាក់សោរប្រព័ន្ធភ្លាមៗពី Settings
         function lockSystemImmediately() {
             openPinLockScreen();
             showToast("ប្រព័ន្ធត្រូវបានចាក់សោរការពារ!", "🔒");
@@ -1286,7 +1347,6 @@
 
             products.push(newProduct);
             
-            // ប្រសិនបើមានស្តុកដំបូង កត់ត្រាវាជាប្រភេទ IN (Inbound)
             if (stock > 0) {
                 const dateStr = new Date().toLocaleString('km-KH', { hour12: false }).replace(',', '');
                 stockTransactions.push({
@@ -1319,7 +1379,6 @@
             renderPOSProducts();
         }
 
-        // កែសម្រួលព័ត៌មាន និងតម្លៃលក់របស់ទំនិញចាស់
         function openProductEditModal(productId) {
             const p = products.find(prod => prod.id === productId);
             if (p) {
@@ -1390,8 +1449,8 @@
         }
 
         function executeBulkPriceAdjustment() {
-            const action = document.getElementById('bulk-action-type').value; // increase, decrease
-            const valueType = document.getElementById('bulk-value-type').value; // percent, amount
+            const action = document.getElementById('bulk-action-type').value; 
+            const valueType = document.getElementById('bulk-value-type').value; 
             const adjustVal = parseFloat(document.getElementById('bulk-adjust-val').value) || 0;
 
             if (adjustVal <= 0) {
@@ -1431,19 +1490,16 @@
                 document.getElementById('stock-inbound-product-id').value = productId;
                 document.getElementById('stock-inbound-title').innerText = `គ្រប់គ្រងស្តុក៖ ${p.emoji} ${p.name}`;
                 
-                // បញ្ចូលទិន្នន័យ Form បច្ចុប្បន្ន
                 document.getElementById('inbound-old-qty').value = p.stock;
                 document.getElementById('inbound-old-cost').value = `$${p.cost.toFixed(2)}`;
                 document.getElementById('inbound-add-qty').value = '';
                 document.getElementById('inbound-new-cost').value = p.cost.toFixed(2);
                 document.getElementById('inbound-supplier').value = '';
 
-                // Reconciliation fields
                 document.getElementById('recon-physical-qty').value = '';
                 document.getElementById('recon-system-qty').innerText = p.stock;
                 document.getElementById('recon-discrepancy').innerText = "0";
 
-                // បើក Tab Form ដំបូងគេ
                 switchInboundSubTab('form');
                 toggleStockInboundModal(true);
             }
@@ -1466,27 +1522,19 @@
         function switchInboundSubTab(tab) {
             currentInboundTab = tab;
             
-            // លាក់គ្រប់ Sub-views
             document.getElementById('inbound-subview-form').classList.add('hidden');
             document.getElementById('inbound-subview-recon').classList.add('hidden');
             document.getElementById('inbound-subview-history').classList.add('hidden');
 
-            // បើក Sub-view ដែលត្រូវរើស
             document.getElementById(`inbound-subview-${tab}`).classList.remove('hidden');
 
-            // ធ្វើបច្ចុប្បន្នភាពស្ទីល Tab Buttons
-            const tabBtnForm = document.getElementById('inbound-tab-form');
-            const tabBtnRecon = document.getElementById('inbound-tab-recon');
-            const tabBtnHistory = document.getElementById('inbound-tab-history');
+            const otherTabs = ['form', 'recon', 'history'].filter(t => t !== tab);
+            
+            document.getElementById(`inbound-tab-${tab}`).className = "flex-1 py-3 text-center font-bold text-primary border-b-2 border-primary";
+            otherTabs.forEach(t => {
+                document.getElementById(`inbound-tab-${t}`).className = "flex-1 py-3 text-center font-bold text-gray-400";
+            });
 
-            tabBtnForm.className = "flex-1 py-3 text-center font-bold text-gray-400";
-            tabBtnRecon.className = "flex-1 py-3 text-center font-bold text-gray-400";
-            tabBtnHistory.className = "flex-1 py-3 text-center font-bold text-gray-400";
-            
-            const selectedBtnId = `inbound-tab-${tab}`;
-            document.getElementById(selectedBtnId).className = "flex-1 py-3 text-center font-bold text-primary border-b-2 border-primary";
-            
-            // If history tab is selected, render history list
             if (tab === 'history') {
                 renderInboundHistory();
                 document.getElementById('inbound-save-btn').classList.add('hidden');
@@ -1519,7 +1567,6 @@
             }
         }
 
-        // រក្សាទុកប្រតិបត្តិការស្តុក (Inbound / Reconciliation)
         function saveStockTransaction() {
             const productId = parseInt(document.getElementById('stock-inbound-product-id').value);
             const p = products.find(prod => prod.id === productId);
@@ -1528,7 +1575,6 @@
             const dateStr = new Date().toLocaleString('km-KH', { hour12: false }).replace(',', '');
 
             if (currentInboundTab === 'form') {
-                // ១. លំហូរចូលស្តុកថ្មី (IN)
                 const addQty = parseInt(document.getElementById('inbound-add-qty').value) || 0;
                 const newCost = parseFloat(document.getElementById('inbound-new-cost').value) || 0;
                 const supplierName = document.getElementById('inbound-supplier').value.trim() || 'អ្នកផ្គត់ផ្គង់ទូទៅ';
@@ -1538,17 +1584,14 @@
                     return;
                 }
 
-                // គណនាតម្លៃដើមមធ្យមថ្មី (Weighted Average Cost)
                 const totalOldValue = p.stock * p.cost;
                 const totalNewValue = addQty * newCost;
                 const totalNewQty = p.stock + addQty;
                 const weightedAverageCost = (totalOldValue + totalNewValue) / totalNewQty;
 
-                // កែទិន្នន័យផលិតផល
                 p.stock = totalNewQty;
                 p.cost = parseFloat(weightedAverageCost.toFixed(2));
 
-                // កត់ត្រាប្រវត្តិ
                 stockTransactions.push({
                     id: stockTransactions.length + 1,
                     productId: productId,
@@ -1563,7 +1606,6 @@
                 showToast(`បានបញ្ចូលស្តុក "${p.name}" +${addQty} ជោគជ័យ!`, "📦");
 
             } else if (currentInboundTab === 'recon') {
-                // ២. លំហូរផ្ទៀងផ្ទាត់កែតម្រូវស្តុក (ADJ)
                 const physicalQty = parseInt(document.getElementById('recon-physical-qty').value);
                 const reason = document.getElementById('recon-reason').value;
 
@@ -1579,19 +1621,17 @@
                     return;
                 }
 
-                // កត់ត្រាប្រវត្តិ ADJ
                 stockTransactions.push({
                     id: stockTransactions.length + 1,
                     productId: productId,
                     type: 'ADJ',
-                    qty: disc, // វិជ្ជមានបើលើស អវិជ្ជមានបើបាត់
-                    cost: p.cost, // ថ្លៃដើមបច្ចុប្បន្ន
+                    qty: disc, 
+                    cost: p.cost, 
                     date: dateStr,
-                    supplier: reason, // កត់ត្រាមូលហេតុជំនួសកន្លែង supplier
+                    supplier: reason, 
                     active: true
                 });
 
-                // កែទិន្នន័យស្តុកផលិតផលភ្លាមៗឱ្យស្មើនឹងចំនួនជាក់ស្តែង
                 p.stock = physicalQty;
                 showToast(`បានផ្ទៀងស្តុក "${p.name}" ទៅជា ${physicalQty} រួចរាល់!`, "⚖️");
             }
@@ -1604,7 +1644,6 @@
             renderPOSProducts();
         }
 
-        // បង្ហាញបញ្ជីប្រវត្តិស្តុករបស់ទំនិញជាក់លាក់
         function renderInboundHistory() {
             const productId = parseInt(document.getElementById('stock-inbound-product-id').value);
             const container = document.getElementById('inbound-history-list');
@@ -1617,7 +1656,6 @@
                 return;
             }
 
-            // បង្ហាញពីថ្មីទៅចាស់
             filteredTrans.slice().reverse().forEach(t => {
                 let badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-100";
                 let sign = "+";
@@ -1668,36 +1706,34 @@
                 return;
             }
 
-            // សួរបញ្ជាក់សាមញ្ញមុននឹង Void
-            const modalCheck = confirm(`តើបងពិតជាចង់ "បោះបង់ (Void)" ប្រតិបត្តិការនេះមែនទេ? ស្តុកទំនិញនឹងត្រូវប្តូរមកវិញដោយស្វ័យប្រវត្តិ។`);
-            if (!modalCheck) return;
+            // ជំនួស confirm dialog ធម្មតាដោយ Custom Confirm Modal
+            showConfirm(
+                'បោះបង់ប្រតិបត្តិការស្តុក',
+                `តើបងពិតជាចង់ "បោះបង់ (Void)" ប្រតិបត្តិការនេះមែនទេ? ចំនួនស្តុកទំនិញនឹងត្រូវប្តូរត្រលប់មកវិញដោយស្វ័យប្រវត្ត។`,
+                function() {
+                    trans.active = false;
 
-            // សម្គាល់ថាត្រូវបាន Void
-            trans.active = false;
+                    if (trans.type === 'IN') {
+                        p.stock -= trans.qty;
+                    } else if (trans.type === 'ADJ') {
+                        p.stock -= trans.qty; 
+                    }
 
-            // គណនាផលប៉ះពាល់មកលើស្តុកវិញ
-            if (trans.type === 'IN') {
-                p.stock -= trans.qty;
-            } else if (trans.type === 'ADJ') {
-                p.stock -= trans.qty; // Reverse the adjustment effect
-            }
+                    recalculateWeightedAverageCost(p.id);
 
-            // គណនាថ្លៃដើមមធ្យមឡើងវិញ (Recalculate Weighted Average Cost based on valid INs only)
-            recalculateWeightedAverageCost(p.id);
+                    saveLocalData('hkm_retail_products', products);
+                    saveLocalData('hkm_retail_stock_transactions', stockTransactions);
 
-            saveLocalData('hkm_retail_products', products);
-            saveLocalData('hkm_retail_stock_transactions', stockTransactions);
-
-            showToast("បានបោះបង់ប្រតិបត្តិការដោយជោគជ័យ!", "🗑️");
-            
-            // ធ្វើបច្ចុប្បន្នភាព UI
-            renderInboundHistory();
-            renderStockProducts();
-            renderPOSProducts();
-            
-            // បច្ចុប្បន្នភាពទម្រង់ IN Form values ខាងក្រោយ
-            document.getElementById('inbound-old-qty').value = p.stock;
-            document.getElementById('inbound-old-cost').value = `$${p.cost.toFixed(2)}`;
+                    showToast("បានបោះបង់ប្រតិបត្តិការដោយជោគជ័យ!", "🗑️");
+                    
+                    renderInboundHistory();
+                    renderStockProducts();
+                    renderPOSProducts();
+                    
+                    document.getElementById('inbound-old-qty').value = p.stock;
+                    document.getElementById('inbound-old-cost').value = `$${p.cost.toFixed(2)}`;
+                }
+            );
         }
 
         function recalculateWeightedAverageCost(productId) {
@@ -1706,7 +1742,6 @@
 
             const validIns = stockTransactions.filter(t => t.productId === productId && t.type === 'IN' && t.active === true);
             if (validIns.length === 0) {
-                // ប្រសិនបើគ្មានប្រវត្តិចូលទាល់តែសោះ ឱ្យថ្លៃដើមទៅសូន្យ ឬតម្លៃដើមដំបូង
                 p.cost = 0;
                 return;
             }
@@ -1747,7 +1782,6 @@
             showToast(`បានបន្ថែម ${product.name}`, "🛒");
             updateCartBadge();
             
-            // បើជាទំព័រ POS បង្ហាញកន្ត្រកអណ្តែត
             if (currentTab === 'pos') {
                 const cartBar = document.getElementById('floating-cart-bar');
                 cartBar.classList.remove('translate-y-20', 'opacity-0');
@@ -1779,7 +1813,7 @@
             const content = document.getElementById('cart-modal-content');
             if (show) {
                 renderCartItems();
-                applyCustomerDiscount(); // បច្ចុប្បន្នភាពការបញ្ចុះតម្លៃ
+                applyCustomerDiscount(); 
                 modal.classList.remove('opacity-0', 'pointer-events-none');
                 content.classList.remove('translate-y-full');
                 content.classList.add('translate-y-0');
@@ -1939,7 +1973,6 @@
 
             showToast("ចុះឈ្មោះសមាជិកថ្មីជោគជ័យ", "👥");
             
-            // សំអាត form
             document.getElementById('new-cust-name').value = '';
             document.getElementById('new-cust-phone').value = '';
             
@@ -1948,7 +1981,6 @@
             populateCustomerSelect();
         }
 
-        // គណនាបញ្ចុះតម្លៃសមាជិកភាព
         function applyCustomerDiscount() {
             const select = document.getElementById('checkout-customer-select');
             selectedCustomerId = select.value ? parseInt(select.value) : null;
@@ -2086,7 +2118,6 @@
         function openPaymentSelectorModal() {
             toggleDraftInvoiceModal(false);
             
-            // គណនាផលសរុបលុយក្នុងកន្ត្រក
             let subtotal = 0;
             Object.values(cart).forEach(item => {
                 subtotal += (item.qty * item.product.price);
@@ -2104,7 +2135,6 @@
             document.getElementById('pay-total-khr').innerText = `${finalKhr.toLocaleString()} ៛`;
             document.getElementById('khqr-total-usd').innerText = `$${finalUsd.toFixed(2)}`;
 
-            // កំណត់ទិន្នន័យលំនាំដើមលុយសុទ្ធ
             selectedPaymentMethod = "Cash";
             selectedCashCurrency = "USD";
             document.getElementById('cash-received-input').value = '';
@@ -2134,7 +2164,6 @@
         function selectPaymentMode(mode) {
             selectedPaymentMethod = mode;
             
-            // ប្ដូរស្ទីលប៊ូតុង
             document.querySelectorAll('.pay-mode-btn').forEach(btn => {
                 btn.classList.remove('border-primary', 'bg-emerald-50/50');
                 btn.classList.add('border-transparent', 'bg-gray-50');
@@ -2144,7 +2173,6 @@
             activeBtn.classList.remove('border-transparent', 'bg-gray-50');
             activeBtn.classList.add('border-primary', 'bg-emerald-50/50');
 
-            // បង្ហាញផ្នែកលម្អិត
             if (mode === 'Cash') {
                 document.getElementById('cash-payment-details').classList.remove('hidden');
                 document.getElementById('khqr-payment-details').classList.add('hidden');
@@ -2157,7 +2185,6 @@
             }
         }
 
-        // ការបង្កើតប៊ូតុងលុយរហ័ស (Quick Cash Suggestions)
         function updateQuickCashButtons(finalUsd, finalKhr) {
             const container = document.getElementById('quick-cash-container');
             container.innerHTML = '';
@@ -2174,7 +2201,6 @@
                     100
                 ];
             } else {
-                // ជម្រើសជារៀល (ដូចជា ៥០០០៛, ១០០០០៛, ២០០០០៛, ៥០០០០៛, ១០០០០០៛)
                 suggestions = [
                     finalKhr,
                     Math.ceil(finalKhr / 1000) * 1000,
@@ -2186,12 +2212,11 @@
                 ];
             }
 
-            // ដកតម្លៃស្ទួនចេញ និងច្រោះយកតែតម្លៃស្មើ ឬធំជាងផលសរុបលក់
             const finalVal = (selectedCashCurrency === "USD") ? finalUsd : finalKhr;
             const uniqueSuggestions = [...new Set(suggestions)]
                 .filter(val => val >= finalVal)
                 .sort((a, b) => a - b)
-                .slice(0, 4); // យកតែ ៤ ប៊ូតុងរហ័ស
+                .slice(0, 4); 
 
             uniqueSuggestions.forEach(val => {
                 const btn = document.createElement('button');
@@ -2219,11 +2244,9 @@
             document.getElementById('change-usd').innerText = "$0.00";
             document.getElementById('change-khr').innerText = "0 ៛";
             
-            // កំណត់ Label របស់ប្រអប់បញ្ចូល
             const label = document.getElementById('cash-received-label');
             label.innerText = (selectedCashCurrency === "USD") ? "ប្រាក់ទទួលបាន (USD $)៖" : "ប្រាក់ទទួលបាន (Riel ៛)៖";
 
-            // បច្ចុប្បន្នភាពប៊ូតុងលុយរហ័សឡើងវិញ
             let subtotal = 0;
             Object.values(cart).forEach(item => { subtotal += (item.qty * item.product.price); });
             let discount = selectedCustomerId ? (subtotal * 0.05) : 0;
@@ -2232,7 +2255,6 @@
             updateQuickCashButtons(finalUsd, finalKhr);
         }
 
-        // គណនាប្រាក់អាប់ជា USD និង KHR
         function calculateCashChange() {
             let subtotal = 0;
             Object.values(cart).forEach(item => { subtotal += (item.qty * item.product.price); });
@@ -2262,7 +2284,6 @@
             document.getElementById('change-khr').innerText = `${Math.round(changeKhr).toLocaleString()} ៛`;
         }
 
-        // បញ្ចប់ប្រតិបត្តិការលក់ កាត់ស្តុកជាក់ស្ដែង និងចេញវិក្កយបត្រផ្លូវការ
         function executeOfficialPayment() {
             const keys = Object.keys(cart);
             if (keys.length === 0) {
@@ -2274,7 +2295,6 @@
             let totalCost = 0;
             let totalItems = 0;
 
-            // ផ្ទៀងផ្ទាត់ការបង់លុយសុទ្ធជាមុនសិន
             if (selectedPaymentMethod === "Cash") {
                 const receivedVal = parseFloat(document.getElementById('cash-received-input').value) || 0;
                 let finalVal = 0;
@@ -2296,17 +2316,14 @@
                 }
             }
 
-            // ដំណើរការកាត់ស្តុកពិតប្រាកដ (Official Inventory Deduction)
             keys.forEach(productId => {
                 const item = cart[productId];
                 
-                // កាត់ស្តុកនៅក្នុងប្រព័ន្ធផ្ទាល់ (Local Memory Deduction)
                 const realProduct = products.find(p => p.id == productId);
                 if (realProduct) {
                     realProduct.stock -= item.qty;
                 }
 
-                // បូកផលសរុបលក់
                 const rowTotal = item.qty * item.product.price;
                 const rowCost = item.qty * item.product.cost;
                 totalCost += rowCost;
@@ -2316,7 +2333,6 @@
             subtotal = 0;
             Object.values(cart).forEach(item => { subtotal += (item.qty * item.product.price); });
 
-            // គណនាប្រាក់បញ្ចុះតម្លៃ និងតម្លៃចុងក្រោយ
             let discount = 0;
             let customerObj = null;
             if (selectedCustomerId) {
@@ -2331,7 +2347,6 @@
             const newInvoiceId = 1000 + salesHistory.length + 1;
             const dateStr = new Date().toLocaleString('km-KH', { hour12: false }).replace(',', '');
 
-            // រក្សាទុកក្នុងប្រវត្តិលក់អចិន្ត្រៃយ៍
             const saleRecord = {
                 id: newInvoiceId,
                 date: dateStr,
@@ -2342,18 +2357,14 @@
             };
             salesHistory.push(saleRecord);
 
-            // រក្សាទុកទិន្នន័យទាំងអស់ចូល LocalStorage
             saveLocalData('hkm_retail_products', products);
             saveLocalData('hkm_retail_sales_history', salesHistory);
             saveLocalData('hkm_retail_customers', customers);
 
-            // បង្ហាញវិក្កយបត្រជោគជ័យ
             generateReceiptPaper(newInvoiceId, dateStr, subtotal, discount, finalAmount, selectedPaymentMethod, customerObj);
             
-            // បិទផ្ទាំងទូទាត់ប្រាក់
             togglePaymentModal(false);
             
-            // សំអាតកន្ត្រក និងធ្វើបច្ចុប្បន្នភាព App
             cart = {};
             selectedCustomerId = null;
             document.getElementById('checkout-customer-select').value = "";
@@ -2362,7 +2373,6 @@
             renderStockProducts();
             renderCustomersList();
 
-            // បង្ហាញវិក្កយបត្រជោគជ័យ
             toggleReceiptModal(true);
             showToast("ទូទាត់ការលក់ជោគជ័យ និងកាត់ស្តុករួចរាល់!", "✅");
         }
@@ -2372,7 +2382,6 @@
             const paper = document.getElementById('receipt-paper');
             let itemsHtml = '';
             
-            // ទាញរាល់ទំនិញដែលបានលក់នៅក្នុងកន្ត្រក
             Object.values(cart).forEach(item => {
                 const rowTotal = item.qty * item.product.price;
                 itemsHtml += `
@@ -2386,7 +2395,6 @@
             const hasQR = (method === 'KHQR');
             const finalKhr = Math.round(finalAmount * config.exchangeRate);
 
-            // ព័ត៌មានលុយសុទ្ធទទួលបាន និងប្រាក់អាប់
             let cashDetailsHtml = '';
             if (method === 'Cash') {
                 const receivedVal = parseFloat(document.getElementById('cash-received-input').value) || 0;
@@ -2473,7 +2481,6 @@
                         <span class="text-primary">${finalKhr.toLocaleString()} ៛</span>
                     </div>
                     
-                    <!-- បង្ហាញព័ត៌មានអាប់លុយបន្ថែម -->
                     ${cashDetailsHtml}
                 </div>
 
@@ -2490,12 +2497,10 @@
 
                 ${hasQR ? `
                     <div class="flex flex-col items-center justify-center pt-3 border-t border-dashed border-gray-200">
-                        <!-- Simulated KHQR Code -->
                         <div class="w-28 h-28 bg-white border-4 border-red-500 rounded-2xl flex items-center justify-center p-1 relative shadow-inner">
                             <div class="w-full h-full bg-slate-900 flex items-center justify-center text-white text-[8px] text-center font-mono rounded-lg">
                                 KHQR MOCKUP
                             </div>
-                            <!-- KHQR Center Logo -->
                             <div class="absolute w-6 h-6 bg-red-600 border border-white rounded-md flex items-center justify-center text-[8px] font-bold text-white">
                                 KH
                             </div>
@@ -2554,7 +2559,6 @@
             document.getElementById('report-profit-total').innerText = `$${profit.toFixed(2)}`;
             document.getElementById('report-profit-rate').innerText = `ភាគរយចំណេញ៖ ${profitRate.toFixed(0)}%`;
 
-            // គូរគំនូសរបាយការណ៍បង់ប្រាក់
             const chartContainer = document.getElementById('payment-chart-container');
             chartContainer.innerHTML = '';
             
@@ -2577,7 +2581,7 @@
             });
         }
 
-        // ១៥. ប្រព័ន្ធបង្កើត និងបោះពុម្ពសន្លឹករបាយការណ៍ផ្លូវការ (Official printable sheet logic)
+        // ១៥. ប្រព័ន្ធបង្កើត និងបោះពុម្ពសន្លឹករបាយការណ៍ផ្លូវការ
         function generateReportSheet() {
             const reportType = document.getElementById('report-type-select').value;
             const startVal = document.getElementById('report-start-date').value;
@@ -2594,15 +2598,12 @@
             const generatedDateStr = new Date().toLocaleString('km-KH', { hour12: false }).replace(',', '');
 
             if (reportType === 'sales') {
-                // ១. របាយការណ៍លក់រួមតាមជួរថ្ងៃ (Combined Sales Report Sheet)
                 const start = new Date(startVal);
                 start.setHours(0,0,0,0);
                 const end = new Date(endVal);
                 end.setHours(23,59,59,999);
 
-                // ច្រោះយកតែទិន្នន័យក្នុងជួរកាលបរិច្ឆេទ
                 const filteredHistory = salesHistory.filter(s => {
-                    // ប្តូរ "2026-07-05 11:30" ទៅជា Date object
                     const dateParts = s.date.split(' ');
                     const dateSegments = dateParts[0].split('-');
                     const timeSegments = dateParts[1].split(':');
@@ -2701,7 +2702,6 @@
                 `;
 
             } else {
-                // ២. របាយការណ៍ស្តុកទំនិញបច្ចុប្បន្ន (Inventory Balance Sheet)
                 let totalCostVal = 0;
                 let totalRetailVal = 0;
                 let rowsHtml = '';
@@ -2794,7 +2794,6 @@
                 `;
             }
 
-            // បន្ថែមប៊ូតុងបញ្ជាបោះពុម្ពខាងលើ (លាក់ពេលព្រីន)
             const controlHeader = `
                 <div class="no-print bg-slate-100 p-4 rounded-2xl flex items-center justify-between mb-6">
                     <button onclick="switchTab('reports')" class="bg-gray-600 text-white text-xs font-bold px-4 py-2 rounded-xl active:scale-95 transition">
@@ -2808,7 +2807,6 @@
 
             sheet.innerHTML = controlHeader + contentHtml;
             
-            // បើកទំព័ររបាយការណ៍ Printable
             document.querySelectorAll('.app-view').forEach(view => view.classList.add('hidden'));
             sheet.classList.remove('hidden');
         }
@@ -2836,15 +2834,20 @@
                 passcode: passcode
             };
 
-            // រក្សាទុកក្នុង LocalStorage
             saveLocalData('hkm_retail_config', config);
-
-            // អនុវត្តលើ UI ភ្លាមៗ
             applyConfigToUI();
             showToast("បានរក្សាទុកការកំណត់ជោគជ័យ!", "💾");
         }
 
-        // ១៧. ប្រព័ន្ធស្កែនបាកូដតាមកាមេរ៉ាទូរស័ព្ទ (Camera Barcode Scanning System)
+        // ១៧. ប្រព័ន្ធស្កែនបាកូដតាមកាមេរ៉ាទូរស័ព្ទកម្រិតខ្ពស់ (Camera Barcode Scanning System)
+        function updateScannerStatus(text, colorClass) {
+            const statusText = document.getElementById('scanner-status-text');
+            const statusInd = document.getElementById('scanner-status-indicator');
+            
+            statusText.innerText = text;
+            statusInd.className = `w-2.5 h-2.5 rounded-full ${colorClass} animate-pulse`;
+        }
+
         function startBarcodeScanner(tab) {
             activeScannerTab = tab;
             const modal = document.getElementById('scanner-modal');
@@ -2858,51 +2861,82 @@
             content.classList.remove('scale-90');
             content.classList.add('scale-100');
 
-            // រង់ចាំ Modal transition ចប់ ទើបចាប់ផ្ដើមកាមេរ៉ា
+            updateScannerStatus("កំពុងឆែកកាមេរ៉ា...", "bg-orange-500");
+
             setTimeout(() => {
                 if (typeof Html5Qrcode === 'undefined') {
-                    showScannerError("កំពុងទាញយកបណ្ណាល័យស្កែន... សូមព្យាយាមម្ដងទៀតក្នុងពេលបន្តិចទៀត។");
+                    showScannerError("កំពុងទាញយកបណ្ណាល័យស្កែន... សូមរង់ចាំ ១វិនាទី រួចសាកល្បងម្ដងទៀត។");
+                    updateScannerStatus("កំហុសបណ្ណាល័យ", "bg-red-500");
                     return;
                 }
 
                 Html5Qrcode.getCameras().then(devices => {
                     if (devices && devices.length > 0) {
-                        // ស្វែងរកកាមេរ៉ាក្រោយ (Back camera) ជាអាទិភាព
                         let cameraId = devices[0].id;
+                        
+                        // ស្វែងរកកាមេរ៉ាក្រោយ (Back camera / environment) ដើម្បីឱ្យស្កែនបាកូដបានច្បាស់ល្អ
                         const backCamera = devices.find(device => 
                             device.label.toLowerCase().includes('back') || 
                             device.label.toLowerCase().includes('rear') || 
-                            device.label.toLowerCase().includes('environment')
+                            device.label.toLowerCase().includes('environment') || 
+                            device.label.toLowerCase().includes('facing 1')
                         );
                         if (backCamera) {
                             cameraId = backCamera.id;
+                            updateScannerStatus("បានរកឃើញកាមេរ៉ាក្រោយ 📷", "bg-blue-500");
+                        } else {
+                            updateScannerStatus("ប្រើប្រាស់កាមេរ៉ាលំនាំដើម", "bg-yellow-500");
                         }
 
-                        html5QrcodeScanner = new Html5Qrcode("interactive-reader");
+                        // កំណត់ប្រភេទបាកូដទាំងអស់ដែលត្រូវស្កែន (1D Barcodes ដ៏សំខាន់សម្រាប់ទំនិញ)
+                        const formatsToSupport = [
+                            Html5QrcodeSupportedFormats.EAN_13,
+                            Html5QrcodeSupportedFormats.EAN_8,
+                            Html5QrcodeSupportedFormats.CODE_128,
+                            Html5QrcodeSupportedFormats.UPC_A,
+                            Html5QrcodeSupportedFormats.UPC_E,
+                            Html5QrcodeSupportedFormats.CODE_39,
+                            Html5QrcodeSupportedFormats.QR_CODE
+                        ];
+
+                        html5QrcodeScanner = new Html5Qrcode("interactive-reader", {
+                            formatsToSupport: formatsToSupport,
+                            verbose: false
+                        });
+
                         html5QrcodeScanner.start(
                             cameraId,
                             {
-                                fps: 12,
+                                fps: 15,
                                 qrbox: (width, height) => {
-                                    // ប្រអប់ទ្រវែងកណ្ដាល សមស្របខ្លាំងសម្រាប់បាកូដទំនិញ
-                                    return { width: Math.floor(width * 0.75), height: Math.floor(height * 0.4) };
+                                    // រចនាប្រអប់ស្កែនឱ្យសមស្របនឹងបាកូដផលិតផលឆ្នូតៗវែងៗ
+                                    return { width: Math.floor(width * 0.8), height: Math.floor(height * 0.45) };
+                                },
+                                experimentalFeatures: {
+                                    useBarCodeDetectorIfSupported: true
                                 }
                             },
                             (decodedText, decodedResult) => {
+                                // ស្កែនត្រូវបាកូដ! ដំណើរការសំឡេង និងទិន្នន័យ
+                                playBeepSound();
                                 handleDecodedBarcode(decodedText);
                                 stopBarcodeScanner();
                             },
                             (errorMessage) => {
-                                // កំពុងស្កែនបន្តបន្ទាប់ (Ignore continuous frame mismatches)
+                                // កំពុងស្កែន... (Ignore frames that don't have barcode)
+                                updateScannerStatus("កំពុងរង់ចាំបាកូដ...", "bg-emerald-500");
                             }
                         ).catch(err => {
-                            showScannerError("កំហុសក្នុងការបើកកាមេរ៉ា៖ " + err);
+                            showScannerError("កំហុសឆ្គងកាមេរ៉ា៖ " + err + "\n\n(ចំណាំ៖ បើបងបើក preview លើកម្មវិធី Canvas វានឹងរារាំងកាមេរ៉ា។ សូម Deploy កូដនេះទៅ GitHub Pages ប្រើលីង HTTPS ទើបដំណើរការ)");
+                            updateScannerStatus("បរាជ័យការបើក", "bg-red-500");
                         });
                     } else {
-                        showScannerError("រកមិនឃើញកាមេរ៉ាឡើយ! សូមធានាថាឧបករណ៍របស់អ្នកមានភ្ជាប់កាមេរ៉ា។");
+                        showScannerError("រកមិនឃើញឧបករណ៍កាមេរ៉ាឡើយ! សូមប្រាកដថាទូរស័ព្ទរបស់បងមានកាមេរ៉ា និងអនុញ្ញាតសិទ្ធិ។");
+                        updateScannerStatus("គ្មានកាមេរ៉ា", "bg-red-500");
                     }
                 }).catch(err => {
-                    showScannerError("សិទ្ធិប្រើប្រាស់កាមេរ៉ាត្រូវបានបដិសេធ ឬមានកំហុស៖ " + err);
+                    showScannerError("សិទ្ធិប្រើប្រាស់ត្រូវបានបដិសេធ ឬមានកំហុស៖ " + err + "\n\nសូមប្រាកដថាបងបានចុច 'Allow' អនុញ្ញាតឱ្យប្រើប្រាស់កាមេរ៉ាក្នុងកម្មវិធីរុករក (Browser)។");
+                    updateScannerStatus("ខ្វះសិទ្ធិបើក", "bg-red-500");
                 });
             }, 300);
         }
@@ -2937,20 +2971,17 @@
             showToast(`បានស្កែនឃើញកូដ៖ ${barcode}`, "📷");
             
             if (activeScannerTab === 'pos') {
-                // ស្វែងរកទំនិញតាមបាកូដ
                 const product = products.find(p => p.barcode === barcode);
                 if (product) {
                     addToCart(product.id);
                     document.getElementById('pos-search').value = '';
                     filterProducts();
                 } else {
-                    // បំពេញក្នុងប្រអប់ស្វែងរក
                     document.getElementById('pos-search').value = barcode;
                     filterProducts();
                     showToast("រកមិនឃើញទំនិញដែលត្រូវនឹងបាកូដនេះទេ!", "⚠️");
                 }
             } else if (activeScannerTab === 'stock') {
-                // ស្វែងរកទំនិញក្នុងស្តុក
                 document.getElementById('stock-search').value = barcode;
                 filterStockProducts();
                 
