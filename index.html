@@ -859,9 +859,9 @@
                 <!-- Container for HTML5 QR Code Reader -->
                 <div id="scanner-reader-container" class="w-full bg-slate-900 rounded-2xl overflow-hidden aspect-square border border-gray-800 relative flex items-center justify-center shadow-lg">
                     <div id="interactive-reader" class="w-full h-full"></div>
-                    <!-- Target Area Overlay -->
+                    <!-- Target Area Overlay: Optimized specifically for 1D horizontal barcodes like EAN-13 -->
                     <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
-                        <div class="w-56 h-36 border-2 border-primary rounded-2xl relative opacity-75 flex items-center justify-center">
+                        <div class="w-64 h-24 border-2 border-primary rounded-xl relative opacity-85 flex items-center justify-center">
                             <div class="absolute w-5 h-5 border-t-4 border-l-4 border-primary -top-1 -left-1"></div>
                             <div class="absolute w-5 h-5 border-t-4 border-r-4 border-primary -top-1 -right-1"></div>
                             <div class="absolute w-5 h-5 border-b-4 border-l-4 border-primary -bottom-1 -left-1"></div>
@@ -871,7 +871,16 @@
                         </div>
                     </div>
                 </div>
-                <p class="text-[10px] text-gray-400 text-center mt-3 leading-normal">សូមយករូបបាកូដទំនិញមកតម្រង់ក្នុងតំបន់គោលដៅឱ្យចំ ដើម្បីស្កែន</p>
+                <p class="text-[10px] text-gray-400 text-center mt-3 leading-normal">សូមយករូបបាកូដទំនិញមកតម្រង់ផ្ដេកក្នុងប្រអប់ដើម្បីស្កែន</p>
+                
+                <!-- Fallback: Manual Barcode Input inside Scanner Modal -->
+                <div class="w-full mt-3 border-t border-gray-100 pt-3">
+                    <div class="flex gap-1.5">
+                        <input type="text" id="scanner-manual-input" class="flex-1 px-3 py-1.5 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary text-center font-bold" placeholder="ឬវាយបញ្ចូលកូដដោយដៃ...">
+                        <button onclick="submitManualScannerInput()" class="bg-secondary text-white text-xs px-3 py-1.5 rounded-xl font-bold active:scale-95 transition">បញ្ជូន</button>
+                    </div>
+                </div>
+
                 <div id="scanner-error-message" class="text-[10px] text-red-500 mt-2 hidden text-center max-w-full break-words bg-red-50 p-2 rounded-xl border border-red-100 font-semibold"></div>
             </div>
             <div class="p-4 bg-gray-50 border-t border-gray-100 flex gap-2">
@@ -924,7 +933,8 @@
             { id: 2, barcode: '884001234568', sku: 'BEV-WATER-01', name: 'ទឹកបរិសុទ្ធ វីតាល់ (500ml)', categoryId: '1', cost: 0.15, price: 0.25, stock: 240, lowLimit: 30, emoji: '💧' },
             { id: 3, barcode: '885002468101', sku: 'GRO-RICE-01', name: 'អង្ករផ្កាម្លិះ (5kg)', categoryId: '2', cost: 4.50, price: 6.00, stock: 15, lowLimit: 5, emoji: '🌾' },
             { id: 4, barcode: '885002468102', sku: 'GRO-NOODLE-01', name: 'មីម៉ាម៉ា សាច់ជ្រូកចិញ្រ្ចាំ (កេស)', categoryId: '2', cost: 3.80, price: 4.80, stock: 4, lowLimit: 5, emoji: '🍜' },
-            { id: 5, barcode: '886003579123', sku: 'HOU-SOAP-01', name: 'សាប៊ូដុសខ្លួន Lux (85g)', categoryId: '3', cost: 0.45, price: 0.70, stock: 50, lowLimit: 10, emoji: '🧼' }
+            { id: 5, barcode: '886003579123', sku: 'HOU-SOAP-01', name: 'សាប៊ូដុសខ្លួន Lux (85g)', categoryId: '3', cost: 0.45, price: 0.70, stock: 50, lowLimit: 10, emoji: '🧼' },
+            { id: 6, barcode: '8901057335782', sku: 'HOU-PASTE-02', name: 'ថ្នាំដុសធ្មេញ Colgate (150g)', categoryId: '3', cost: 1.10, price: 1.50, stock: 85, lowLimit: 10, emoji: '🪥' }
         ];
 
         let stockTransactions = [
@@ -2856,6 +2866,7 @@
             
             errMsg.classList.add('hidden');
             errMsg.innerText = '';
+            document.getElementById('scanner-manual-input').value = '';
             
             modal.classList.remove('opacity-0', 'pointer-events-none');
             content.classList.remove('scale-90');
@@ -2870,75 +2881,64 @@
                     return;
                 }
 
-                Html5Qrcode.getCameras().then(devices => {
-                    if (devices && devices.length > 0) {
-                        let cameraId = devices[0].id;
-                        
-                        // ស្វែងរកកាមេរ៉ាក្រោយ (Back camera / environment) ដើម្បីឱ្យស្កែនបាកូដបានច្បាស់ល្អ
-                        const backCamera = devices.find(device => 
-                            device.label.toLowerCase().includes('back') || 
-                            device.label.toLowerCase().includes('rear') || 
-                            device.label.toLowerCase().includes('environment') || 
-                            device.label.toLowerCase().includes('facing 1')
-                        );
-                        if (backCamera) {
-                            cameraId = backCamera.id;
-                            updateScannerStatus("បានរកឃើញកាមេរ៉ាក្រោយ 📷", "bg-blue-500");
-                        } else {
-                            updateScannerStatus("ប្រើប្រាស់កាមេរ៉ាលំនាំដើម", "bg-yellow-500");
+                // Check for camera and start scanning using environment camera directly for better focus
+                const formatsToSupport = [
+                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.EAN_8,
+                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.UPC_A,
+                    Html5QrcodeSupportedFormats.UPC_E,
+                    Html5QrcodeSupportedFormats.CODE_39,
+                    Html5QrcodeSupportedFormats.QR_CODE
+                ];
+
+                html5QrcodeScanner = new Html5Qrcode("interactive-reader", {
+                    formatsToSupport: formatsToSupport,
+                    verbose: false
+                });
+
+                // Request optimal configurations with a horizontal scanner box
+                html5QrcodeScanner.start(
+                    { facingMode: "environment" },
+                    {
+                        fps: 24, // Faster frames per second
+                        qrbox: (width, height) => {
+                            // 1D barcodes are long and thin, so a horizontal wide box works best
+                            return {
+                                width: Math.floor(width * 0.85),
+                                height: Math.floor(height * 0.35)
+                            };
+                        },
+                        experimentalFeatures: {
+                            useBarCodeDetectorIfSupported: true
                         }
-
-                        // កំណត់ប្រភេទបាកូដទាំងអស់ដែលត្រូវស្កែន (1D Barcodes ដ៏សំខាន់សម្រាប់ទំនិញ)
-                        const formatsToSupport = [
-                            Html5QrcodeSupportedFormats.EAN_13,
-                            Html5QrcodeSupportedFormats.EAN_8,
-                            Html5QrcodeSupportedFormats.CODE_128,
-                            Html5QrcodeSupportedFormats.UPC_A,
-                            Html5QrcodeSupportedFormats.UPC_E,
-                            Html5QrcodeSupportedFormats.CODE_39,
-                            Html5QrcodeSupportedFormats.QR_CODE
-                        ];
-
-                        html5QrcodeScanner = new Html5Qrcode("interactive-reader", {
-                            formatsToSupport: formatsToSupport,
-                            verbose: false
-                        });
-
-                        html5QrcodeScanner.start(
-                            cameraId,
-                            {
-                                fps: 15,
-                                qrbox: (width, height) => {
-                                    // រចនាប្រអប់ស្កែនឱ្យសមស្របនឹងបាកូដផលិតផលឆ្នូតៗវែងៗ
-                                    return { width: Math.floor(width * 0.8), height: Math.floor(height * 0.45) };
-                                },
-                                experimentalFeatures: {
-                                    useBarCodeDetectorIfSupported: true
-                                }
-                            },
-                            (decodedText, decodedResult) => {
-                                // ស្កែនត្រូវបាកូដ! ដំណើរការសំឡេង និងទិន្នន័យ
-                                playBeepSound();
-                                handleDecodedBarcode(decodedText);
-                                stopBarcodeScanner();
-                            },
-                            (errorMessage) => {
-                                // កំពុងស្កែន... (Ignore frames that don't have barcode)
-                                updateScannerStatus("កំពុងរង់ចាំបាកូដ...", "bg-emerald-500");
-                            }
-                        ).catch(err => {
-                            showScannerError("កំហុសឆ្គងកាមេរ៉ា៖ " + err + "\n\n(ចំណាំ៖ បើបងបើក preview លើកម្មវិធី Canvas វានឹងរារាំងកាមេរ៉ា។ សូម Deploy កូដនេះទៅ GitHub Pages ប្រើលីង HTTPS ទើបដំណើរការ)");
-                            updateScannerStatus("បរាជ័យការបើក", "bg-red-500");
-                        });
-                    } else {
-                        showScannerError("រកមិនឃើញឧបករណ៍កាមេរ៉ាឡើយ! សូមប្រាកដថាទូរស័ព្ទរបស់បងមានកាមេរ៉ា និងអនុញ្ញាតសិទ្ធិ។");
-                        updateScannerStatus("គ្មានកាមេរ៉ា", "bg-red-500");
+                    },
+                    (decodedText, decodedResult) => {
+                        // Scan success!
+                        playBeepSound();
+                        handleDecodedBarcode(decodedText);
+                        stopBarcodeScanner();
+                    },
+                    (errorMessage) => {
+                        // Scanning...
+                        updateScannerStatus("កំពុងរង់ចាំបាកូដ...", "bg-emerald-500");
                     }
-                }).catch(err => {
-                    showScannerError("សិទ្ធិប្រើប្រាស់ត្រូវបានបដិសេធ ឬមានកំហុស៖ " + err + "\n\nសូមប្រាកដថាបងបានចុច 'Allow' អនុញ្ញាតឱ្យប្រើប្រាស់កាមេរ៉ាក្នុងកម្មវិធីរុករក (Browser)។");
-                    updateScannerStatus("ខ្វះសិទ្ធិបើក", "bg-red-500");
+                ).catch(err => {
+                    showScannerError("កំហុសឆ្គងកាមេរ៉ា៖ " + err + "\n\n(ចំណាំ៖ ប្រសិនបើបងកំពុងបើក Preview លើ Canvas វាអាចនឹងរារាំងកាមេរ៉ា។ សូមបើកតាម GitHub Pages ទើបដំណើរការល្អ)");
+                    updateScannerStatus("បរាជ័យការបើក", "bg-red-500");
                 });
             }, 300);
+        }
+
+        function submitManualScannerInput() {
+            const manualCode = document.getElementById('scanner-manual-input').value.trim();
+            if (manualCode === "") {
+                showToast("សូមបំពេញលេខកូដបាកូដសិន!", "⚠️");
+                return;
+            }
+            playBeepSound();
+            handleDecodedBarcode(manualCode);
+            stopBarcodeScanner();
         }
 
         function stopBarcodeScanner() {
