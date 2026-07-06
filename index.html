@@ -71,8 +71,8 @@
                 🏪
             </div>
             <div>
-                <h1 class="text-sm font-bold leading-tight">Heang Kimhay Retail Shop</h1>
-                <p class="text-[10px] text-gray-400">គណនី៖ ចាន់ នី (បុគ្គលិកគិតលុយ)</p>
+                <h1 class="text-sm font-bold leading-tight" id="header-shop-name">Heang Kimhay Retail Shop</h1>
+                <p class="text-[10px] text-gray-400" id="header-user-display">គណនី៖ ចាន់ នី (បុគ្គលិកគិតលុយ)</p>
             </div>
         </div>
         <div class="flex items-center gap-3">
@@ -233,6 +233,71 @@
             </div>
         </div>
 
+        <!-- ------------------- ទំព័រទី ៥៖ ការកំណត់ (TAB: settings) ------------------- -->
+        <div id="view-settings" class="app-view p-4 space-y-5 hidden">
+            <h2 class="text-base font-bold text-secondary">⚙️ ការកំណត់ប្រព័ន្ធ (System Settings)</h2>
+            
+            <!-- កំណត់ព័ត៌មានហាង -->
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3.5">
+                <h3 class="text-xs font-bold text-primary uppercase tracking-wider">🏪 ព័ត៌មានហាង & វិក្កយបត្រ</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[10px] text-gray-400 font-bold block mb-1">ឈ្មោះហាងលក់ទំនិញ *</label>
+                        <input type="text" id="set-shop-name" class="w-full text-xs border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:ring-1 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-400 font-bold block mb-1">លេខទូរស័ព្ទហាង *</label>
+                        <input type="text" id="set-shop-phone" class="w-full text-xs border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:ring-1 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-400 font-bold block mb-1">អាសយដ្ឋានហាង *</label>
+                        <input type="text" id="set-shop-address" class="w-full text-xs border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:ring-1 focus:ring-primary">
+                    </div>
+                </div>
+            </div>
+
+            <!-- កំណត់ប្រតិបត្តិការលក់ -->
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3.5">
+                <h3 class="text-xs font-bold text-primary uppercase tracking-wider">💵 ប្រតិបត្តិការលក់ & បុគ្គលិក</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[10px] text-gray-400 font-bold block mb-1">ឈ្មោះបុគ្គលិកគិតលុយបច្ចុប្បន្ន *</label>
+                        <input type="text" id="set-staff-name" class="w-full text-xs border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:ring-1 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-400 font-bold block mb-1">អត្រាប្តូរប្រាក់ហាង (1$ = ? Riels) *</label>
+                        <input type="number" id="set-exchange-rate" class="w-full text-xs border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:ring-1 focus:ring-primary font-mono font-bold text-blue-600">
+                    </div>
+                </div>
+            </div>
+
+            <!-- សុវត្ថិភាពចាក់សោរប្រព័ន្ធ -->
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3.5">
+                <h3 class="text-xs font-bold text-red-500 uppercase tracking-wider">🔒 សុវត្ថិភាព & ការការពារទិន្នន័យ</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[10px] text-gray-400 font-bold block mb-1">លេខកូដ PIN ៤ខ្ទង់ សម្រាប់ចាក់សោរប្រព័ន្ធ (PIN Code)</label>
+                        <input type="password" id="set-system-pin" maxlength="4" placeholder="ទុកទំនេរ ប្រសិនបើមិនចង់ចាក់សោរ" class="w-full text-xs border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:ring-1 focus:ring-red-400 font-mono text-center tracking-widest text-lg font-bold">
+                        <p class="text-[9px] text-gray-400 mt-1">កូដនេះការពារការចូលទៅកាន់ផ្នែក ស្តុក, របាយការណ៍ និងការកំណត់ (លំនាំដើម៖ 1234)។</p>
+                    </div>
+                    
+                    <button onclick="lockSystemNow()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs active:scale-95 transition flex items-center justify-center gap-1.5">
+                        🔒 ចាក់សោប្រព័ន្ធឥឡូវនេះ (Lock System)
+                    </button>
+                </div>
+            </div>
+
+            <!-- ប៊ូតុងបញ្ជាផ្សេងៗ -->
+            <div class="flex gap-2.5">
+                <button onclick="resetAllApplicationData()" class="flex-1 bg-red-100 text-red-600 font-bold py-3.5 rounded-2xl text-xs active:scale-95 transition shadow-sm">
+                    🗑️ ជម្រះទិន្នន័យទាំងអស់
+                </button>
+                <button onclick="saveSystemSettings()" class="flex-1 bg-primary text-white font-bold py-3.5 rounded-2xl text-xs shadow-md active:scale-95 transition">
+                    💾 រក្សាទុកការកំណត់
+                </button>
+            </div>
+        </div>
+
     </main>
 
     <!-- ------------------- Floating Cart Bar ------------------- -->
@@ -270,9 +335,50 @@
             <div class="text-lg">👥</div>
             <span class="text-[10px] font-medium">សមាជិក</span>
         </button>
+        <button onclick="switchTab('settings')" id="nav-settings" class="nav-item flex flex-col items-center gap-1 text-gray-400">
+            <div class="text-lg">⚙️</div>
+            <span class="text-[10px] font-medium">កំណត់</span>
+        </button>
     </nav>
 
     <!-- ==================== Modals Section ==================== -->
+
+    <!-- security lock modal PIN PAD (ចាក់សោរប្រព័ន្ធ) -->
+    <div id="security-lock-modal" class="fixed inset-0 bg-secondary/95 backdrop-blur-md z-[150] flex flex-col items-center justify-center p-6 hidden">
+        <div class="w-full max-w-xs flex flex-col items-center space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center text-3xl mx-auto shadow-inner animate-pulse">
+                    🔒
+                </div>
+                <h3 class="text-white font-bold text-base">ប្រព័ន្ធចាក់សោរ Heang Kimhay</h3>
+                <p class="text-xs text-slate-400">សូមវាយបញ្ចូលលេខកូដ PIN ដើម្បីបើកដំណើរការ</p>
+            </div>
+
+            <!-- PIN Circles Indicator -->
+            <div class="flex gap-4 justify-center py-2" id="pin-dots-container">
+                <div class="w-4 h-4 rounded-full border-2 border-slate-500 bg-transparent transition-all duration-150"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-500 bg-transparent transition-all duration-150"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-500 bg-transparent transition-all duration-150"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-500 bg-transparent transition-all duration-150"></div>
+            </div>
+
+            <!-- Custom Numeric PIN Pad -->
+            <div class="grid grid-cols-3 gap-3 w-full max-w-[240px]">
+                <button onclick="pressPinKey('1')" class="bg-slate-800/60 active:bg-slate-700 hover:bg-slate-700/80 text-white font-bold text-xl py-4 rounded-2xl transition">1</button>
+                <button onclick="pressPinKey('2')" class="bg-slate-800/60 active:bg-slate-700 hover:bg-slate-700/80 text-white font-bold text-xl py-4 rounded-2xl transition">2</button>
+                <button onclick="pressPinKey('3')" class="bg-slate-800/60 active:bg-slate-700 hover:bg-slate-700/80 text-white font-bold text-xl py-4 rounded-2xl transition">3</button>
+                <button onclick="pressPinKey('4')" class="bg-slate-800/60 active:bg-slate-700 hover:bg-slate-700/80 text-white font-bold text-xl py-4 rounded-2xl transition">4</button>
+                <button onclick="pressPinKey('5')" class="bg-slate-800/60 active:bg-slate-700 hover:bg-slate-700/80 text-white font-bold text-xl py-4 rounded-2xl transition">5</button>
+                <button onclick="pressPinKey('6')" class="bg-slate-800/60 active:bg-slate-700 hover:bg-slate-700/80 text-white font-bold text-xl py-4 rounded-2xl transition">6</button>
+                <button onclick="pressPinKey('7')" class="bg-slate-800/60 active:bg-slate-700 hover:bg-slate-700/80 text-white font-bold text-xl py-4 rounded-2xl transition">7</button>
+                <button onclick="pressPinKey('8')" class="bg-slate-800/60 active:bg-slate-700 hover:bg-slate-700/80 text-white font-bold text-xl py-4 rounded-2xl transition">8</button>
+                <button onclick="pressPinKey('9')" class="bg-slate-800/60 active:bg-slate-700 hover:bg-slate-700/80 text-white font-bold text-xl py-4 rounded-2xl transition">9</button>
+                <button onclick="cancelPinVerification()" class="text-slate-400 hover:text-white font-bold text-xs py-4">បោះបង់</button>
+                <button onclick="pressPinKey('0')" class="bg-slate-800/60 active:bg-slate-700 hover:bg-slate-700/80 text-white font-bold text-xl py-4 rounded-2xl transition">0</button>
+                <button onclick="pressPinBackspace()" class="text-slate-400 hover:text-white font-bold text-xl py-4 flex items-center justify-center">⌫</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ១. Cart Modal -->
     <div id="cart-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
@@ -360,7 +466,7 @@
                         <span class="text-slate-400">/</span>
                         <span class="text-lg font-bold text-amber-400" id="pay-total-khr">0 ៛</span>
                     </div>
-                    <p class="text-[9px] text-slate-500">អត្រាប្ដូរប្រាក់របស់ហាង៖ 1$ = 4,100 ៛</p>
+                    <p class="text-[9px] text-slate-500" id="pay-rate-preview">អត្រាប្ដូរប្រាក់របស់ហាង៖ 1$ = 4,100 ៛</p>
                 </div>
 
                 <div class="space-y-2">
@@ -781,7 +887,7 @@
             }
         }
 
-        // ២. រៀបចំទិន្នន័យមូលដ្ឋាននៅក្នុងប្រព័ន្ធ (In-Memory State)
+        // ២. រៀបចំទិន្នន័យមូលដ្ឋាននៅក្នុងប្រព័ន្ធ (In-Memory State & Settings Config)
         const categories = {
             'all': 'ទាំងអស់',
             '1': 'ភេសជ្ជៈ',
@@ -789,7 +895,18 @@
             '3': 'របស់ប្រើប្រាស់'
         };
 
-        const EXCHANGE_RATE = 4100; // 1$ = 4100៛
+        // Live Config Variables (Loaded from LocalStorage if exists)
+        let shopName = "Heang Kimhay Retail Shop";
+        let shopPhone = "012 345 678";
+        let shopAddress = "រាជធានីភ្នំពេញ, ប្រទេសកម្ពុជា";
+        let currentUser = "ចាន់ នី";
+        let EXCHANGE_RATE = 4100; // 1$ = 4100៛
+        let systemPassword = "1234"; // default PIN passcode
+
+        // Security Session lock
+        let sessionUnlocked = false; 
+        let pendingTabToNavigate = "pos";
+        let enteredPinCode = "";
 
         let products = [
             { id: 1, barcode: '884001234567', sku: 'BEV-COCA-01', name: 'កូកាកូឡា កំប៉ុង (330ml)', categoryId: '1', cost: 0.35, price: 0.50, stock: 120, lowLimit: 20, emoji: '🥤' },
@@ -832,6 +949,7 @@
 
         // ៣. ដំណើរការនៅពេលបើក App ដំបូង
         window.onload = function() {
+            loadSystemSettings(); // ទាញយកការកំណត់ពី LocalStorage
             renderPOSProducts();
             renderStockProducts();
             renderCustomersList();
@@ -840,6 +958,198 @@
             populateCustomerSelect();
             initReportDatePickers();
         };
+
+        // ៤. ទាញយក និងរក្សាទុកការកំណត់ប្រព័ន្ធ (LocalStorage Settings Logic)
+        function loadSystemSettings() {
+            if (localStorage.getItem("shopName")) shopName = localStorage.getItem("shopName");
+            if (localStorage.getItem("shopPhone")) shopPhone = localStorage.getItem("shopPhone");
+            if (localStorage.getItem("shopAddress")) shopAddress = localStorage.getItem("shopAddress");
+            if (localStorage.getItem("currentUser")) currentUser = localStorage.getItem("currentUser");
+            if (localStorage.getItem("EXCHANGE_RATE")) EXCHANGE_RATE = parseInt(localStorage.getItem("EXCHANGE_RATE"));
+            if (localStorage.getItem("systemPassword") !== null) systemPassword = localStorage.getItem("systemPassword");
+
+            // ប្រសិនបើធ្លាប់មានរក្សាទុកទិន្នន័យផលិតផល និងស្តុក អាចទាញមកបាន
+            if (localStorage.getItem("productsList")) products = JSON.parse(localStorage.getItem("productsList"));
+            if (localStorage.getItem("stockTransactions")) stockTransactions = JSON.parse(localStorage.getItem("stockTransactions"));
+            if (localStorage.getItem("customersList")) customers = JSON.parse(localStorage.getItem("customersList"));
+            if (localStorage.getItem("salesHistory")) salesHistory = JSON.parse(localStorage.getItem("salesHistory"));
+
+            applySystemSettingsToUI();
+        }
+
+        function saveSystemSettings() {
+            const inputShopName = document.getElementById('set-shop-name').value.trim();
+            const inputShopPhone = document.getElementById('set-shop-phone').value.trim();
+            const inputShopAddress = document.getElementById('set-shop-address').value.trim();
+            const inputStaffName = document.getElementById('set-staff-name').value.trim();
+            const inputRate = parseInt(document.getElementById('set-exchange-rate').value) || 4100;
+            const inputPin = document.getElementById('set-system-pin').value.trim();
+
+            if (!inputShopName || !inputShopPhone || !inputShopAddress || !inputStaffName) {
+                showToast("សូមបញ្ចូលព័ត៌មានចាំបាច់ឱ្យបានពេញលេញ!", "❌");
+                return;
+            }
+
+            if (inputPin !== "" && (inputPin.length !== 4 || isNaN(inputPin))) {
+                showToast("លេខកូដ PIN ត្រូវតែជាលេខ ៤ខ្ទង់!", "❌");
+                return;
+            }
+
+            shopName = inputShopName;
+            shopPhone = inputShopPhone;
+            shopAddress = inputShopAddress;
+            currentUser = inputStaffName;
+            EXCHANGE_RATE = inputRate;
+            systemPassword = inputPin;
+
+            localStorage.setItem("shopName", shopName);
+            localStorage.setItem("shopPhone", shopPhone);
+            localStorage.setItem("shopAddress", shopAddress);
+            localStorage.setItem("currentUser", currentUser);
+            localStorage.setItem("EXCHANGE_RATE", EXCHANGE_RATE.toString());
+            localStorage.setItem("systemPassword", systemPassword);
+
+            applySystemSettingsToUI();
+            showToast("បានរក្សាទុកការកំណត់ដោយជោគជ័យ", "💾");
+        }
+
+        function applySystemSettingsToUI() {
+            // បច្ចុប្បន្នភាពអក្សរលើអេក្រង់
+            document.getElementById('header-shop-name').innerText = shopName;
+            document.getElementById('header-user-display').innerText = `គណនី៖ ${currentUser} (បុគ្គលិកគិតលុយ)`;
+            document.getElementById('pay-rate-preview').innerText = `អត្រាប្ដូរប្រាក់របស់ហាង៖ 1$ = ${EXCHANGE_RATE.toLocaleString()} ៛`;
+
+            // បច្ចុប្បន្នភាពតម្លៃក្នុងទម្រង់ Setting Inputs
+            document.getElementById('set-shop-name').value = shopName;
+            document.getElementById('set-shop-phone').value = shopPhone;
+            document.getElementById('set-shop-address').value = shopAddress;
+            document.getElementById('set-staff-name').value = currentUser;
+            document.getElementById('set-exchange-rate').value = EXCHANGE_RATE;
+            document.getElementById('set-system-pin').value = systemPassword;
+        }
+
+        // ជម្រះទិន្នន័យសាកល្បងទាំងអស់ឡើងវិញ (Factory Reset)
+        function resetAllApplicationData() {
+            if (confirm("⚠️ តើបងពិតជាចង់ជម្រះទិន្នន័យទាំងអស់ក្នុងប្រព័ន្ធនេះមែនទេ? រាល់ការលក់ ស្តុក និងសមាជិកដែលបានបញ្ចូលបន្ថែមនឹងត្រូវបាត់បង់ទាំងអស់។")) {
+                localStorage.clear();
+                showToast("កំពុងសម្អាតប្រព័ន្ធ...", "🧹");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            }
+        }
+
+        // ៥. ប្រព័ន្ធការពារចាក់សោរប្រព័ន្ធ (PIN Lock Screen Implementation)
+        function lockSystemNow() {
+            sessionUnlocked = false;
+            enteredPinCode = "";
+            updatePinDotsUI();
+            switchTab('pos'); // ត្រលប់ទៅទំព័រលក់វិញភ្លាមៗ
+            showToast("ប្រព័ន្ធត្រូវបានចាក់សោរ", "🔒");
+        }
+
+        function openSecurityLockModal(targetTab) {
+            pendingTabToNavigate = targetTab;
+            enteredPinCode = "";
+            updatePinDotsUI();
+            document.getElementById('security-lock-modal').classList.remove('hidden');
+        }
+
+        function cancelPinVerification() {
+            document.getElementById('security-lock-modal').classList.add('hidden');
+            enteredPinCode = "";
+            switchTab('pos'); // ត្រលប់ទៅទំព័រលក់ (មិនចាក់សោរ) វិញ
+        }
+
+        function pressPinKey(digit) {
+            if (enteredPinCode.length < 4) {
+                enteredPinCode += digit;
+                updatePinDotsUI();
+
+                // នៅពេលវាយគ្រប់ ៤ ខ្ទង់ ផ្ទៀងផ្ទាត់ស្វ័យប្រវត្ត
+                if (enteredPinCode.length === 4) {
+                    setTimeout(() => {
+                        verifySystemPINCode();
+                    }, 150);
+                }
+            }
+        }
+
+        function pressPinBackspace() {
+            if (enteredPinCode.length > 0) {
+                enteredPinCode = enteredPinCode.slice(0, -1);
+                updatePinDotsUI();
+            }
+        }
+
+        function updatePinDotsUI() {
+            const dots = document.querySelectorAll('#pin-dots-container div');
+            dots.forEach((dot, index) => {
+                if (index < enteredPinCode.length) {
+                    dot.classList.add('bg-red-500', 'border-red-500', 'scale-110');
+                    dot.classList.remove('border-slate-500', 'bg-transparent');
+                } else {
+                    dot.classList.remove('bg-red-500', 'border-red-500', 'scale-110');
+                    dot.classList.add('border-slate-500', 'bg-transparent');
+                }
+            });
+        }
+
+        function verifySystemPINCode() {
+            if (enteredPinCode === systemPassword) {
+                sessionUnlocked = true;
+                document.getElementById('security-lock-modal').classList.add('hidden');
+                showToast("បើកសោរប្រព័ន្ធជោគជ័យ", "🔓");
+                switchTab(pendingTabToNavigate); // ចូលទៅកាន់ទំព័រដែលចង់ទៅ
+            } else {
+                showToast("លេខកូដ PIN មិនត្រឹមត្រូវឡើយ!", "❌");
+                enteredPinCode = "";
+                updatePinDotsUI();
+            }
+        }
+
+        // ៦. ប្ដូរ Tab និងត្រួតពិនិត្យសុវត្ថិភាព
+        function switchTab(tabName) {
+            // ប្រសិនបើចូលទៅកាន់តំបន់ហាមឃាត់ (Stock, Reports, Settings) ហើយមានកំណត់ Password 
+            if (['stock', 'reports', 'settings'].includes(tabName) && systemPassword !== "" && !sessionUnlocked) {
+                openSecurityLockModal(tabName);
+                return;
+            }
+
+            currentTab = tabName;
+            
+            document.querySelectorAll('.app-view').forEach(view => view.classList.add('hidden'));
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.remove('text-primary');
+                btn.classList.add('text-gray-400');
+            });
+            document.getElementById(`nav-${tabName}`).classList.add('text-primary');
+            document.getElementById(`nav-${tabName}`).classList.remove('text-gray-400');
+
+            const cartBar = document.getElementById('floating-cart-bar');
+            const hasItems = Object.keys(cart).length > 0;
+            if (tabName === 'pos' && hasItems) {
+                cartBar.classList.remove('translate-y-20', 'opacity-0');
+                cartBar.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            } else {
+                cartBar.classList.add('translate-y-20', 'opacity-0');
+                cartBar.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            }
+
+            if (tabName === 'reports') {
+                renderReports();
+            }
+        }
+
+        // ៧. កត់ត្រាទិន្នន័យផលិតផល និងប្រតិបត្តិការស្តុកក្នុង LocalStorage (Persist Data Helpers)
+        function syncDatabaseChangesToLocalStorage() {
+            localStorage.setItem("productsList", JSON.stringify(products));
+            localStorage.setItem("stockTransactions", JSON.stringify(stockTransactions));
+            localStorage.setItem("customersList", JSON.stringify(customers));
+            localStorage.setItem("salesHistory", JSON.stringify(salesHistory));
+        }
 
         function initReportDatePickers() {
             const today = new Date();
@@ -1167,6 +1477,7 @@
                 showToast(`បានកែតម្រូវស្តុក "${p.name}" ទៅ ${actual}`, '⚖️');
             }
 
+            syncDatabaseChangesToLocalStorage();
             toggleStockEditModal(false);
             renderStockProducts();
             renderPOSProducts();
@@ -1189,6 +1500,7 @@
             }
 
             tx.voided = true;
+            syncDatabaseChangesToLocalStorage();
             showToast("បានបោះបង់ប្រតិបត្តិការដោយជោគជ័យ", "🚫");
             renderStockHistory(tx.productId);
             renderStockProducts();
@@ -1206,34 +1518,6 @@
                 modal.classList.add('opacity-0', 'pointer-events-none');
                 content.classList.remove('scale-100');
                 content.classList.add('scale-90');
-            }
-        }
-
-        function switchTab(tabName) {
-            currentTab = tabName;
-            
-            document.querySelectorAll('.app-view').forEach(view => view.classList.add('hidden'));
-            document.getElementById(`view-${tabName}`).classList.remove('hidden');
-
-            document.querySelectorAll('.nav-item').forEach(btn => {
-                btn.classList.remove('text-primary');
-                btn.classList.add('text-gray-400');
-            });
-            document.getElementById(`nav-${tabName}`).classList.add('text-primary');
-            document.getElementById(`nav-${tabName}`).classList.remove('text-gray-400');
-
-            const cartBar = document.getElementById('floating-cart-bar');
-            const hasItems = Object.keys(cart).length > 0;
-            if (tabName === 'pos' && hasItems) {
-                cartBar.classList.remove('translate-y-20', 'opacity-0');
-                cartBar.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
-            } else {
-                cartBar.classList.add('translate-y-20', 'opacity-0');
-                cartBar.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
-            }
-
-            if (tabName === 'reports') {
-                renderReports();
             }
         }
 
@@ -1451,6 +1735,7 @@
             };
 
             customers.push(newCust);
+            syncDatabaseChangesToLocalStorage();
             showToast("ចុះឈ្មោះសមាជិកថ្មីជោគជ័យ", "👥");
             
             document.getElementById('new-cust-name').value = '';
@@ -1527,7 +1812,7 @@
             container.innerHTML = `
                 <div class="text-center space-y-1">
                     <span class="text-blue-500 font-bold uppercase text-[10px] bg-blue-50 px-2 py-1 rounded border border-blue-100">📋 សន្លឹកពង្រាងវិក្កយបត្រ (Draft)</span>
-                    <h2 class="text-sm font-bold text-secondary mt-2">Heang Kimhay Retail Shop</h2>
+                    <h2 class="text-sm font-bold text-secondary mt-2">${shopName}</h2>
                     <p class="text-[9px] text-gray-400">ទំនិញក្នុងកន្ត្រក - មិនទាន់ទូទាត់ប្រាក់ & មិនទាន់កាត់ស្តុកទេ</p>
                 </div>
 
@@ -1779,16 +2064,16 @@
             paper.innerHTML = `
                 <div class="text-center space-y-1">
                     <div class="text-3xl">🏪</div>
-                    <h2 class="text-sm font-bold text-secondary">Heang Kimhay Retail Shop</h2>
-                    <p class="text-[9px] text-gray-400">អាសយដ្ឋាន៖ ភ្នំពេញ, ប្រទេសកម្ពុជា</p>
-                    <p class="text-[9px] text-gray-400">ទូរស័ព្ទ៖ 012 345 678</p>
+                    <h2 class="text-sm font-bold text-secondary">${shopName}</h2>
+                    <p class="text-[9px] text-gray-400">អាសយដ្ឋាន៖ ${shopAddress}</p>
+                    <p class="text-[9px] text-gray-400">ទូរស័ព្ទ៖ ${shopPhone}</p>
                     <span class="text-emerald-600 font-bold uppercase text-[9px] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 mt-2 inline-block">✅ វិក្កយបត្រផ្លូវការ (Official Receipt)</span>
                 </div>
 
                 <div class="border-t border-dashed border-gray-200 pt-3 space-y-1 text-[9px] text-gray-500">
                     <div class="flex justify-between">
                         <span>លេខវិក្កយបត្រ៖ #${newInvoiceId}</span>
-                        <span>បុគ្គលិក៖ ចាន់ នី</span>
+                        <span>បុគ្គលិក៖ ${currentUser}</span>
                     </div>
                     <div class="flex justify-between">
                         <span>កាលបរិច្ឆេទ៖ ${dateStr}</span>
@@ -1864,6 +2149,7 @@
                 `}
             `;
 
+            syncDatabaseChangesToLocalStorage();
             togglePaymentModal(false);
             cart = {};
             selectedCustomerId = null;
@@ -2014,10 +2300,10 @@
                         <div class="space-y-1">
                             <div class="flex items-center gap-2">
                                 <span class="text-3xl">🏪</span>
-                                <span class="text-base font-extrabold text-secondary">Heang Kimhay Retail Shop</span>
+                                <span class="text-base font-extrabold text-secondary">${shopName}</span>
                             </div>
-                            <p class="text-[10px] text-gray-500">អាសយដ្ឋាន៖ រាជធានីភ្នំពេញ, ព្រះរាជាណាចក្រកម្ពុជា</p>
-                            <p class="text-[10px] text-gray-500">លេខទូរស័ព្ទ៖ 012 345 678 / 098 765 432</p>
+                            <p class="text-[10px] text-gray-500">អាសយដ្ឋាន៖ ${shopAddress}</p>
+                            <p class="text-[10px] text-gray-500">លេខទូរស័ព្ទ៖ ${shopPhone}</p>
                         </div>
                         <div class="text-right space-y-1">
                             <h2 class="text-base font-extrabold text-secondary tracking-wide">សន្លឹករបាយការណ៍លក់រួម</h2>
@@ -2029,7 +2315,7 @@
                     <div class="grid grid-cols-2 gap-4 text-[10px] text-gray-500 border-b border-dashed border-gray-200 pb-3 mt-3">
                         <div>
                             <p>កាលបរិច្ឆេទបង្កើតសន្លឹក៖ <span class="font-bold text-gray-700">${dateGeneratedStr}</span></p>
-                            <p>បង្កើតឡើងដោយបុគ្គលិក៖ <span class="font-bold text-gray-700">ចាន់ នី (គណនីគិតលុយ)</span></p>
+                            <p>បង្កើតឡើងដោយបុគ្គលិក៖ <span class="font-bold text-gray-700">${currentUser} (គណនីគិតលុយ)</span></p>
                         </div>
                         <div class="text-right">
                             <p>ស្ថានភាពទិន្នន័យ៖ <span class="text-emerald-600 font-bold">● Local Database (សុក្រឹត)</span></p>
@@ -2086,7 +2372,7 @@
                         <div class="space-y-16">
                             <p class="text-gray-500">អ្នករៀបចំរបាយការណ៍ (Prepared By)</p>
                             <div>
-                                <p class="font-bold text-gray-700">ចាន់ នី</p>
+                                <p class="font-bold text-gray-700">${currentUser}</p>
                                 <p class="text-[10px] text-gray-400">កាលបរិច្ឆេទ៖ ........................</p>
                             </div>
                         </div>
@@ -2139,10 +2425,10 @@
                         <div class="space-y-1">
                             <div class="flex items-center gap-2">
                                 <span class="text-3xl">🏪</span>
-                                <span class="text-base font-extrabold text-secondary">Heang Kimhay Retail Shop</span>
+                                <span class="text-base font-extrabold text-secondary">${shopName}</span>
                             </div>
-                            <p class="text-[10px] text-gray-500">អាសយដ្ឋាន៖ រាជធានីភ្នំពេញ, ព្រះរាជាណាក្រកម្ពុជា</p>
-                            <p class="text-[10px] text-gray-500">លេខទូរស័ព្ទ៖ 012 345 678 / 098 765 432</p>
+                            <p class="text-[10px] text-gray-500">អាសយដ្ឋាន៖ ${shopAddress}</p>
+                            <p class="text-[10px] text-gray-500">លេខទូរស័ព្ទ៖ ${shopPhone}</p>
                         </div>
                         <div class="text-right space-y-1">
                             <h2 class="text-base font-extrabold text-secondary tracking-wide">សន្លឹករបាយការណ៍ស្តុកទំនិញ</h2>
@@ -2294,6 +2580,7 @@
                 voided: false
             });
 
+            syncDatabaseChangesToLocalStorage();
             showToast(`បានបង្កើតទំនិញ "${name}" ដោយជោគជ័យ`, "✅");
             toggleNewProductModal(false);
             
@@ -2394,6 +2681,7 @@
                 }
             });
 
+            syncDatabaseChangesToLocalStorage();
             showToast(`បានរក្សាទុកតម្លៃលក់ថ្មីចំនួន ${updatedCount} មុខទំនិញ`, "✅");
             toggleBulkPriceModal(false);
             renderStockProducts();
@@ -2432,6 +2720,7 @@
             }
         }
 
+        // រក្សាទុកការកែប្រែព័ត៌មានលម្អិតផលិតផល
         function saveProductDetails() {
             const id = parseInt(document.getElementById('edit-prod-id').value);
             const p = products.find(prod => prod.id === id);
@@ -2460,6 +2749,7 @@
             p.price = price;
             p.lowLimit = lowLimit;
 
+            syncDatabaseChangesToLocalStorage();
             showToast("បានកែសម្រួលព័ត៌មានទំនិញរួចរាល់", "✅");
             toggleProductEditModal(false);
             renderStockProducts();
