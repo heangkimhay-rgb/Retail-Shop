@@ -272,6 +272,11 @@
                         <label class="text-gray-400 font-medium">អត្រាប្ដូរប្រាក់ (Exchange Rate 1$ = ៛)៖</label>
                         <input type="number" id="set-exchange-rate" class="w-full p-2 border border-gray-200 rounded-lg outline-none focus:border-primary mt-1 font-bold text-primary" value="4100">
                     </div>
+                    <div>
+                        <label class="text-gray-400 font-medium">Link KHQR (លីងរូបភាព ឬ Link ទូទាត់បាគង)៖</label>
+                        <input type="text" id="set-khqr-link" class="w-full p-2 border border-gray-200 rounded-lg outline-none focus:border-primary mt-1 text-blue-600 font-mono text-[11px]" placeholder="ផាសលីងរូបភាព QR ឬ លីងបង់ប្រាក់បាគងនៅទីនេះ...">
+                        <p class="text-[9px] text-gray-400 mt-1">បងអាចដាក់លីងរូបភាព QR កូដ ឬ Bakong Pay Link ដើម្បីឱ្យអតិថិជនស្កែនទូទាត់ជាក់ស្តែងពេលលក់។</p>
+                    </div>
                 </div>
             </div>
 
@@ -347,7 +352,7 @@
 
     <!-- ==================== ផ្ទាំងលេចឡើងនានា (MODALS) ==================== -->
 
-    <!-- ១. ផ្ទាំងលម្អិតកន្ត្រកទំនិញ (Cart Modal) -->
+    <!-- ១. ផ្ទាំងលម្អិតកន្ត្រកទំនិញ (Cart Modal with Clear Cart Button) -->
     <div id="cart-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
         <div class="w-full bg-white rounded-t-[2rem] max-h-[85vh] flex flex-col transform translate-y-full transition-transform duration-300" id="cart-modal-content">
             <!-- Header របស់ Modal -->
@@ -356,7 +361,13 @@
                     <span class="text-xl">🛒</span>
                     <h3 class="text-xs font-bold text-secondary">កន្ត្រកទំនិញលក់</h3>
                 </div>
-                <button onclick="toggleCartModal(false)" class="text-gray-400 hover:text-gray-600 text-xl p-1">✕</button>
+                <div class="flex items-center gap-2">
+                    <!-- ប៊ូតុងលុបចោលទាំងអស់ (Clear All Button) -->
+                    <button onclick="clearAllCart()" class="text-[10px] bg-red-50 text-red-500 border border-red-100 px-2.5 py-1.5 rounded-lg font-bold hover:bg-red-100 active:scale-95 transition">
+                        🗑️ លុបចោលទាំងអស់
+                    </button>
+                    <button onclick="toggleCartModal(false)" class="text-gray-400 hover:text-gray-600 text-xl p-1 ml-1">✕</button>
+                </div>
             </div>
 
             <!-- បញ្ជីទំនិញក្នុងកន្ត្រក -->
@@ -503,10 +514,8 @@
                 <!-- ផ្នែកបង្ហាញ KHQR Code (លេចឡើងតែពេលរើស KHQR) -->
                 <div id="khqr-payment-details" class="hidden flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-gray-100 space-y-2">
                     <div class="w-40 h-40 bg-white border-4 border-red-500 rounded-2xl flex items-center justify-center p-1.5 relative shadow-lg">
-                        <div class="w-full h-full bg-slate-900 flex flex-col items-center justify-center text-white text-[8px] text-center font-mono leading-relaxed rounded-xl">
-                            <span class="text-lg">📲</span>
-                            <span>HEANG KIMHAY</span>
-                            <span class="text-primary" id="khqr-total-usd">$0.00</span>
+                        <div id="khqr-container-box" class="w-full h-full relative overflow-hidden flex items-center justify-center bg-slate-900 rounded-xl">
+                            <!-- នឹងត្រូវចាក់បញ្ចូលកូដ QR ពិត ឬ Mockup ដោយ JS -->
                         </div>
                         <div class="absolute w-8 h-8 bg-red-600 border border-white rounded-md flex items-center justify-center text-[10px] font-bold text-white">
                             KH
@@ -859,9 +868,9 @@
                 <!-- Container for HTML5 QR Code Reader -->
                 <div id="scanner-reader-container" class="w-full bg-slate-900 rounded-2xl overflow-hidden aspect-square border border-gray-800 relative flex items-center justify-center shadow-lg">
                     <div id="interactive-reader" class="w-full h-full"></div>
-                    <!-- Target Area Overlay: Optimized specifically for 1D horizontal barcodes like EAN-13 -->
+                    <!-- Target Area Overlay - Optimized for wide horizontal 1D product barcodes -->
                     <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
-                        <div class="w-64 h-24 border-2 border-primary rounded-xl relative opacity-85 flex items-center justify-center">
+                        <div class="w-64 h-32 border-2 border-primary rounded-2xl relative opacity-75 flex items-center justify-center">
                             <div class="absolute w-5 h-5 border-t-4 border-l-4 border-primary -top-1 -left-1"></div>
                             <div class="absolute w-5 h-5 border-t-4 border-r-4 border-primary -top-1 -right-1"></div>
                             <div class="absolute w-5 h-5 border-b-4 border-l-4 border-primary -bottom-1 -left-1"></div>
@@ -871,17 +880,17 @@
                         </div>
                     </div>
                 </div>
-                <p class="text-[10px] text-gray-400 text-center mt-3 leading-normal">សូមយករូបបាកូដទំនិញមកតម្រង់ផ្ដេកក្នុងប្រអប់ដើម្បីស្កែន</p>
                 
-                <!-- Fallback: Manual Barcode Input inside Scanner Modal -->
-                <div class="w-full mt-3 border-t border-gray-100 pt-3">
-                    <div class="flex gap-1.5">
-                        <input type="text" id="scanner-manual-input" class="flex-1 px-3 py-1.5 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary text-center font-bold" placeholder="ឬវាយបញ្ចូលកូដដោយដៃ...">
-                        <button onclick="submitManualScannerInput()" class="bg-secondary text-white text-xs px-3 py-1.5 rounded-xl font-bold active:scale-95 transition">បញ្ជូន</button>
+                <!-- Fallback Manual Input Input in Scanner -->
+                <div class="w-full mt-3.5 space-y-1.5 no-print">
+                    <p class="text-[9px] text-gray-400 text-center font-bold uppercase">ឬវាយបញ្ចូលកូដដោយដៃ (ប្រសិនបើកាមេរ៉ាមិនច្បាស់)</p>
+                    <div class="flex gap-2">
+                        <input type="text" id="manual-barcode-input" placeholder="វាយលេខកូដបាកូដ..." class="flex-1 px-3 py-1.5 text-xs border border-gray-200 rounded-xl outline-none focus:border-primary text-center font-bold">
+                        <button onclick="submitManualBarcode()" class="bg-primary hover:bg-emerald-600 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition active:scale-95">បញ្ជូន</button>
                     </div>
                 </div>
 
-                <div id="scanner-error-message" class="text-[10px] text-red-500 mt-2 hidden text-center max-w-full break-words bg-red-50 p-2 rounded-xl border border-red-100 font-semibold"></div>
+                <div id="scanner-error-message" class="text-[10px] text-red-500 mt-2.5 hidden text-center max-w-full break-words bg-red-50 p-2 rounded-xl border border-red-100 font-semibold"></div>
             </div>
             <div class="p-4 bg-gray-50 border-t border-gray-100 flex gap-2">
                 <button onclick="stopBarcodeScanner()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-xl text-xs active:scale-95 transition">
@@ -918,7 +927,8 @@
             address: "ភ្នំពេញ, ប្រទេសកម្ពុជា",
             cashierName: "ចាន់ នី",
             exchangeRate: 4100,
-            passcode: "1234"
+            passcode: "1234",
+            khqrLink: "" // លីងរូបភាព QR ឬ Bakong Link បើកទូលាយ
         };
 
         const categories = {
@@ -934,12 +944,14 @@
             { id: 3, barcode: '885002468101', sku: 'GRO-RICE-01', name: 'អង្ករផ្កាម្លិះ (5kg)', categoryId: '2', cost: 4.50, price: 6.00, stock: 15, lowLimit: 5, emoji: '🌾' },
             { id: 4, barcode: '885002468102', sku: 'GRO-NOODLE-01', name: 'មីម៉ាម៉ា សាច់ជ្រូកចិញ្រ្ចាំ (កេស)', categoryId: '2', cost: 3.80, price: 4.80, stock: 4, lowLimit: 5, emoji: '🍜' },
             { id: 5, barcode: '886003579123', sku: 'HOU-SOAP-01', name: 'សាប៊ូដុសខ្លួន Lux (85g)', categoryId: '3', cost: 0.45, price: 0.70, stock: 50, lowLimit: 10, emoji: '🧼' },
-            { id: 6, barcode: '8901057335782', sku: 'HOU-PASTE-02', name: 'ថ្នាំដុសធ្មេញ Colgate (150g)', categoryId: '3', cost: 1.10, price: 1.50, stock: 85, lowLimit: 10, emoji: '🪥' }
+            // បន្ថែមផលិតផលថ្មីស្របតាមរូបភាព Colgate image_151511.jpg របស់បង
+            { id: 6, barcode: '8901057335782', sku: 'DEN-COLG-01', name: 'ថ្នាំដុសធ្មេញ Colgate (150g)', categoryId: '3', cost: 0.85, price: 1.20, stock: 85, lowLimit: 10, emoji: '🪥' }
         ];
 
         let stockTransactions = [
             { id: 1, productId: 1, type: 'IN', qty: 120, cost: 0.35, date: '2026-07-01 10:00', supplier: 'ក្រុមហ៊ុន Coca-Cola', active: true },
-            { id: 2, productId: 3, type: 'IN', qty: 15, cost: 4.50, date: '2026-07-03 14:30', supplier: 'ក្រុមហ៊ុន អង្ករផ្កាម្លិះ', active: true }
+            { id: 2, productId: 3, type: 'IN', qty: 15, cost: 4.50, date: '2026-07-03 14:30', supplier: 'ក្រុមហ៊ុន អង្ករផ្កាម្លិះ', active: true },
+            { id: 3, productId: 6, type: 'IN', qty: 85, cost: 0.85, date: '2026-07-05 09:15', supplier: 'ដេប៉ូ Colgate ភ្នំពេញ', active: true }
         ];
 
         let customers = [
@@ -1024,6 +1036,7 @@
             document.getElementById('set-cashier-name').value = config.cashierName;
             document.getElementById('set-exchange-rate').value = config.exchangeRate;
             document.getElementById('set-passcode').value = config.passcode;
+            document.getElementById('set-khqr-link').value = config.khqrLink || '';
         }
 
         // បង្ហាញដំណឹង Toast Custom
@@ -1894,6 +1907,26 @@
             }
         }
 
+        // ប៊ូតុងថ្មី៖ សម្អាតទំនិញទាំងអស់ក្នុងកន្ត្រកចេញ (Clear Entire Cart)
+        function clearAllCart() {
+            const keys = Object.keys(cart);
+            if (keys.length === 0) {
+                showToast("គ្មានទំនិញក្នុងកន្ត្រកសម្រាប់លុបទេ!", "ℹ️");
+                return;
+            }
+
+            showConfirm(
+                "លុបចោលកន្ត្រកទំនិញ", 
+                "តើបងពិតជាចង់លុបចោលរាល់មុខទំនិញទាំងអស់ចេញពីកន្ត្រកលក់មែនទេ?", 
+                function() {
+                    cart = {};
+                    updateCartBadge();
+                    toggleCartModal(false);
+                    showToast("បានសម្អាតកន្ត្រកទំនិញរួចរាល់!", "🗑️");
+                }
+            );
+        }
+
         // ១០. អតិថិជន និងការចុះឈ្មោះ (Loyalty System)
         function renderCustomersList() {
             const list = document.getElementById('customers-display-list');
@@ -2124,6 +2157,31 @@
             `;
         }
 
+        // ជំនួយការ៖ បំប្លែង Link KHQR ឬ Bakong deep link ឱ្យទៅជាកូដ QR រូបភាពពិតប្រាកដ
+        function getKHQRImageHTML(amount) {
+            let qrData = config.khqrLink || '';
+            if (!qrData) {
+                // ប្រសិនបើទទេ៖ បង្ហាញ Mockup ដូចមុន
+                return `
+                    <div class="w-full h-full bg-slate-900 flex flex-col items-center justify-center text-white text-[8px] text-center font-mono leading-relaxed rounded-xl p-2">
+                        <span class="text-lg">📲</span>
+                        <span class="font-bold">HEANG KIMHAY</span>
+                        <span class="text-primary font-black mt-1">$${amount.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+            
+            let imageUrl = qrData;
+            // ប្រសិនបើជាលីងទូទៅ (ដូចជា Bakong Link) មិនមែនជាលីងរូបភាព (png, jpg) ទេ នោះយើងបំប្លែងវាទៅជា QR code តាម QR API
+            if (qrData.startsWith('http') && !qrData.match(/\.(jpeg|jpg|gif|png|webp|svg)/i)) {
+                imageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrData)}`;
+            }
+            
+            return `
+                <img src="${imageUrl}" alt="KHQR" class="w-full h-full object-contain rounded-xl" onerror="this.onerror=null; this.src='https://placehold.co/150x150/0f172a/ffffff?text=QR+Error';">
+            `;
+        }
+
         // ១២. ផ្ទាំងទូទាត់ប្រាក់ទ្វេររូបិយប័ណ្ណ (Multi-Currency Checkout Logic)
         function openPaymentSelectorModal() {
             toggleDraftInvoiceModal(false);
@@ -2143,7 +2201,9 @@
 
             document.getElementById('pay-total-usd').innerText = `$${finalUsd.toFixed(2)}`;
             document.getElementById('pay-total-khr').innerText = `${finalKhr.toLocaleString()} ៛`;
-            document.getElementById('khqr-total-usd').innerText = `$${finalUsd.toFixed(2)}`;
+            
+            // បង្ហាញ QR Code តាមលីងដែលបានកំណត់ក្នុង Setting
+            document.getElementById('khqr-container-box').innerHTML = getKHQRImageHTML(finalUsd);
 
             selectedPaymentMethod = "Cash";
             selectedCashCurrency = "USD";
@@ -2508,9 +2568,7 @@
                 ${hasQR ? `
                     <div class="flex flex-col items-center justify-center pt-3 border-t border-dashed border-gray-200">
                         <div class="w-28 h-28 bg-white border-4 border-red-500 rounded-2xl flex items-center justify-center p-1 relative shadow-inner">
-                            <div class="w-full h-full bg-slate-900 flex items-center justify-center text-white text-[8px] text-center font-mono rounded-lg">
-                                KHQR MOCKUP
-                            </div>
+                            ${getKHQRImageHTML(finalAmount)}
                             <div class="absolute w-6 h-6 bg-red-600 border border-white rounded-md flex items-center justify-center text-[8px] font-bold text-white">
                                 KH
                             </div>
@@ -2829,6 +2887,7 @@
             const cashierName = document.getElementById('set-cashier-name').value.trim();
             const exchangeRate = parseInt(document.getElementById('set-exchange-rate').value) || 4100;
             const passcode = document.getElementById('set-passcode').value.trim();
+            const khqrLink = document.getElementById('set-khqr-link').value.trim();
 
             if (!shopName || !phone || !address || !cashierName) {
                 showToast("សូមបំពេញព័ត៌មានឱ្យបានពេញលេញ!", "❌");
@@ -2841,7 +2900,8 @@
                 address: address,
                 cashierName: cashierName,
                 exchangeRate: exchangeRate,
-                passcode: passcode
+                passcode: passcode,
+                khqrLink: khqrLink
             };
 
             saveLocalData('hkm_retail_config', config);
@@ -2866,7 +2926,7 @@
             
             errMsg.classList.add('hidden');
             errMsg.innerText = '';
-            document.getElementById('scanner-manual-input').value = '';
+            document.getElementById('manual-barcode-input').value = '';
             
             modal.classList.remove('opacity-0', 'pointer-events-none');
             content.classList.remove('scale-90');
@@ -2881,64 +2941,75 @@
                     return;
                 }
 
-                // Check for camera and start scanning using environment camera directly for better focus
-                const formatsToSupport = [
-                    Html5QrcodeSupportedFormats.EAN_13,
-                    Html5QrcodeSupportedFormats.EAN_8,
-                    Html5QrcodeSupportedFormats.CODE_128,
-                    Html5QrcodeSupportedFormats.UPC_A,
-                    Html5QrcodeSupportedFormats.UPC_E,
-                    Html5QrcodeSupportedFormats.CODE_39,
-                    Html5QrcodeSupportedFormats.QR_CODE
-                ];
-
-                html5QrcodeScanner = new Html5Qrcode("interactive-reader", {
-                    formatsToSupport: formatsToSupport,
-                    verbose: false
-                });
-
-                // Request optimal configurations with a horizontal scanner box
-                html5QrcodeScanner.start(
-                    { facingMode: "environment" },
-                    {
-                        fps: 24, // Faster frames per second
-                        qrbox: (width, height) => {
-                            // 1D barcodes are long and thin, so a horizontal wide box works best
-                            return {
-                                width: Math.floor(width * 0.85),
-                                height: Math.floor(height * 0.35)
-                            };
-                        },
-                        experimentalFeatures: {
-                            useBarCodeDetectorIfSupported: true
+                Html5Qrcode.getCameras().then(devices => {
+                    if (devices && devices.length > 0) {
+                        let cameraId = devices[0].id;
+                        
+                        // ស្វែងរកកាមេរ៉ាក្រោយ (Back camera / environment) ដើម្បីឱ្យស្កែនបាកូដបានច្បាស់ល្អ
+                        const backCamera = devices.find(device => 
+                            device.label.toLowerCase().includes('back') || 
+                            device.label.toLowerCase().includes('rear') || 
+                            device.label.toLowerCase().includes('environment') || 
+                            device.label.toLowerCase().includes('facing 1')
+                        );
+                        if (backCamera) {
+                            cameraId = backCamera.id;
+                            updateScannerStatus("បានរកឃើញកាមេរ៉ាក្រោយ 📷", "bg-blue-500");
+                        } else {
+                            updateScannerStatus("ប្រើប្រាស់កាមេរ៉ាលំនាំដើម", "bg-yellow-500");
                         }
-                    },
-                    (decodedText, decodedResult) => {
-                        // Scan success!
-                        playBeepSound();
-                        handleDecodedBarcode(decodedText);
-                        stopBarcodeScanner();
-                    },
-                    (errorMessage) => {
-                        // Scanning...
-                        updateScannerStatus("កំពុងរង់ចាំបាកូដ...", "bg-emerald-500");
+
+                        // កំណត់ប្រភេទបាកូដទាំងអស់ដែលត្រូវស្កែន (1D Barcodes ដ៏សំខាន់សម្រាប់ទំនិញ)
+                        const formatsToSupport = [
+                            Html5QrcodeSupportedFormats.EAN_13,
+                            Html5QrcodeSupportedFormats.EAN_8,
+                            Html5QrcodeSupportedFormats.CODE_128,
+                            Html5QrcodeSupportedFormats.UPC_A,
+                            Html5QrcodeSupportedFormats.UPC_E,
+                            Html5QrcodeSupportedFormats.CODE_39,
+                            Html5QrcodeSupportedFormats.QR_CODE
+                        ];
+
+                        html5QrcodeScanner = new Html5Qrcode("interactive-reader", {
+                            formatsToSupport: formatsToSupport,
+                            verbose: false
+                        });
+
+                        html5QrcodeScanner.start(
+                            cameraId,
+                            {
+                                fps: 15,
+                                qrbox: (width, height) => {
+                                    // រចនាប្រអប់ស្កែនឱ្យសមស្របនឹងបាកូដផលិតផលឆ្នូតៗវែងៗ (រាងទទឹងផ្តេក)
+                                    return { width: Math.floor(width * 0.85), height: Math.floor(height * 0.4) };
+                                },
+                                experimentalFeatures: {
+                                    useBarCodeDetectorIfSupported: true
+                                }
+                            },
+                            (decodedText, decodedResult) => {
+                                // ស្កែនត្រូវបាកូដ! ដំណើរការសំឡេង និងទិន្នន័យ
+                                playBeepSound();
+                                handleDecodedBarcode(decodedText);
+                                stopBarcodeScanner();
+                            },
+                            (errorMessage) => {
+                                // កំពុងស្កែន... (Ignore frames that don't have barcode)
+                                updateScannerStatus("កំពុងរង់ចាំបាកូដ...", "bg-emerald-500");
+                            }
+                        ).catch(err => {
+                            showScannerError("កំហុសឆ្គងកាមេរ៉ា៖ " + err + "\n\n(ចំណាំ៖ បើបងបើក preview លើកម្មវិធី Canvas វានឹងរារាំងកាមេរ៉ា។ សូម Deploy កូដនេះទៅ GitHub Pages ប្រើលីង HTTPS ទើបដំណើរការ)");
+                            updateScannerStatus("បរាជ័យការបើក", "bg-red-500");
+                        });
+                    } else {
+                        showScannerError("រកមិនឃើញឧបករណ៍កាមេរ៉ាឡើយ! សូមប្រាកដថាទូរស័ព្ទរបស់បងមានកាមេរ៉ា និងអនុញ្ញាតសិទ្ធិ។");
+                        updateScannerStatus("គ្មានកាមេរ៉ា", "bg-red-500");
                     }
-                ).catch(err => {
-                    showScannerError("កំហុសឆ្គងកាមេរ៉ា៖ " + err + "\n\n(ចំណាំ៖ ប្រសិនបើបងកំពុងបើក Preview លើ Canvas វាអាចនឹងរារាំងកាមេរ៉ា។ សូមបើកតាម GitHub Pages ទើបដំណើរការល្អ)");
-                    updateScannerStatus("បរាជ័យការបើក", "bg-red-500");
+                }).catch(err => {
+                    showScannerError("សិទ្ធិប្រើប្រាស់ត្រូវបានបដិសេធ ឬមានកំហុស៖ " + err + "\n\nសូមប្រាកដថាបងបានចុច 'Allow' អនុញ្ញាតឱ្យប្រើប្រាស់កាមេរ៉ាក្នុងកម្មវិធីរុករក (Browser)។");
+                    updateScannerStatus("ខ្វះសិទ្ធិបើក", "bg-red-500");
                 });
             }, 300);
-        }
-
-        function submitManualScannerInput() {
-            const manualCode = document.getElementById('scanner-manual-input').value.trim();
-            if (manualCode === "") {
-                showToast("សូមបំពេញលេខកូដបាកូដសិន!", "⚠️");
-                return;
-            }
-            playBeepSound();
-            handleDecodedBarcode(manualCode);
-            stopBarcodeScanner();
         }
 
         function stopBarcodeScanner() {
@@ -2965,6 +3036,17 @@
             const errMsg = document.getElementById('scanner-error-message');
             errMsg.innerText = msg;
             errMsg.classList.remove('hidden');
+        }
+
+        function submitManualBarcode() {
+            const val = document.getElementById('manual-barcode-input').value.trim();
+            if (val === "") {
+                showToast("សូមបញ្ចូលលេខកូដបាកូដមុននឹងចុចបញ្ជូន!", "⚠️");
+                return;
+            }
+            playBeepSound();
+            handleDecodedBarcode(val);
+            stopBarcodeScanner();
         }
 
         function handleDecodedBarcode(barcode) {
