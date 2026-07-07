@@ -273,12 +273,12 @@
                         <input type="number" id="set-exchange-rate" class="w-full p-2 border border-gray-200 rounded-lg outline-none focus:border-primary mt-1 font-bold text-primary" value="4100">
                     </div>
                     <div>
-                        <label class="text-gray-400 font-medium">Link KHQR (លីងរូបភាព ឬ Link ទូទាត់បាគង)៖</label>
-                        <input type="text" id="set-khqr-link" class="w-full p-2 border border-gray-200 rounded-lg outline-none focus:border-primary mt-1 text-blue-600 font-mono text-[11px]" placeholder="ផាសលីងរូបភាព QR ឬ លីងបង់ប្រាក់បាគងនៅទីនេះ...">
-                        <div class="text-[9px] text-gray-400 mt-1 space-y-1 bg-slate-50 p-2 rounded-lg border border-gray-100">
-                            <p class="font-bold text-gray-500">💡 របៀបប្រើប្រាស់ឱ្យចេញតម្លៃលុយស្វ័យប្រវត្ត (Dynamic QR)៖</p>
-                            <p>• បើបងផាស <span class="text-emerald-600 font-bold">លីងរូបភាព QR ធម្មតា</span> ៖ ស្កែនទៅ <strong>មិនចេញតម្លៃទេ</strong> (ភ្ញៀវត្រូវវាយលុយខ្លួនឯង)។</p>
-                            <p>• បើបងប្រើ <span class="text-blue-600 font-bold">Bakong Link</span> (ឧទាហរណ៍៖ <code class="bg-gray-100 px-1 py-0.5 rounded text-red-500 font-mono">https://payment.bakong.org.kh/checkout/xxxxxx</code>) ៖ ប្រព័ន្ធនឹង <strong>បញ្ចូលតម្លៃត្រូវបង់ទៅក្នុង QR ស្វ័យប្រវត្ត</strong> ភ្លាមៗពេលភ្ញៀវស្កែន!</p>
+                        <label class="text-gray-500 font-bold">🔑 លេខកូដ KHQR String (EMVCo) ឬ Link ទូទាត់៖</label>
+                        <textarea id="set-khqr-link" rows="3" class="w-full p-2 border border-gray-200 rounded-lg outline-none focus:border-primary mt-1 text-blue-600 font-mono text-[11px] leading-relaxed" placeholder="ផាសលេខកូដ KHQR String ដើម (000201...) ឬលីងបង់ប្រាក់បាគងនៅទីនេះ..."></textarea>
+                        <div class="text-[9px] text-gray-400 mt-1 space-y-1 bg-slate-50 p-2.5 rounded-lg border border-gray-100 leading-normal">
+                            <p class="font-bold text-emerald-600">💡 របៀបកំណត់ឱ្យស្កែនស្គាល់ និងលោតតម្លៃលុយស្វ័យប្រវត្ត (Dynamic KHQR)៖</p>
+                            <p>• <span class="text-emerald-700 font-bold">ណែនាំបំផុត (ស្គាល់គ្រប់ធនាគារ)៖</span> ចូលទៅកាន់កម្មវិធី Bakong ឬ ABA Merchant រួចចម្លង (Copy) លេខកូដ **KHQR String (EMVCo)** របស់បង (ជាអក្សរ និងលេខវែងៗផ្ដើមដោយ <code class="bg-gray-200 px-1 py-0.5 rounded text-red-500 font-mono">000201...</code>) មកផាសក្នុងប្រអប់ខាងលើ។ កម្មវិធីនឹងបំប្លែងវាទៅជាកូដ Dynamic QR ស្វ័យប្រវត្តិតាមតម្លៃលក់ជាក់ស្ដែង!</p>
+                            <p>• <span class="text-blue-600 font-bold">ជម្រើសទី២៖</span> ផាសលីងទូទាត់បាគង (<code class="bg-gray-200 px-1 py-0.5 rounded text-red-500 font-mono">https://payment.bakong.org.kh/checkout/...</code>)។</p>
                         </div>
                     </div>
                 </div>
@@ -518,7 +518,7 @@
                 <!-- ផ្នែកបង្ហាញ KHQR Code (លេចឡើងតែពេលរើស KHQR) -->
                 <div id="khqr-payment-details" class="hidden flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-gray-100 space-y-2">
                     <div class="w-40 h-40 bg-white border-4 border-red-500 rounded-2xl flex items-center justify-center p-1.5 relative shadow-lg">
-                        <div id="khqr-container-box" class="w-full h-full relative overflow-hidden flex items-center justify-center bg-slate-900 rounded-xl">
+                        <div id="khqr-container-box" class="w-full h-full relative overflow-hidden flex items-center justify-center bg-slate-950 rounded-xl">
                             <!-- នឹងត្រូវចាក់បញ្ចូលកូដ QR ពិត ឬ Mockup ដោយ JS -->
                         </div>
                         <div class="absolute w-8 h-8 bg-red-600 border border-white rounded-md flex items-center justify-center text-[10px] font-bold text-white">
@@ -932,7 +932,7 @@
             cashierName: "ចាន់ នី",
             exchangeRate: 4100,
             passcode: "1234",
-            khqrLink: "" // លីងរូបភាព QR ឬ Bakong Link បើកទូលាយ
+            khqrLink: "" // លីងរូបភាព QR ឬ Bakong Link ឬ KHQR String (EMVCo) ដើម
         };
 
         const categories = {
@@ -1671,6 +1671,55 @@
             renderPOSProducts();
         }
 
+        // ប្រព័ន្ធវិភាគ និងបំប្លែង EMVCo / KHQR String ស្វ័យប្រវត្តិតាមស្ដង់ដារបាគង
+        function parseEMVCo(str) {
+            let fields = {};
+            let i = 0;
+            // លុប CRC ចាស់ចេញមុននឹងវិភាគ (ប្រសិនបើមាន Tag 63 នៅចុងក្រោយ)
+            let cleanStr = str;
+            if (str.includes("6304")) {
+                cleanStr = str.split("6304")[0];
+            }
+            while (i < cleanStr.length) {
+                if (i + 4 > cleanStr.length) break;
+                let tag = cleanStr.substring(i, i + 2);
+                let len = parseInt(cleanStr.substring(i + 2, i + 4), 10);
+                if (isNaN(len)) break;
+                let val = cleanStr.substring(i + 4, i + 4 + len);
+                fields[tag] = val;
+                i += 4 + len;
+            }
+            return fields;
+        }
+
+        function generateEMVCo(fields) {
+            let str = "";
+            let tags = Object.keys(fields).sort();
+            tags.forEach(tag => {
+                if (tag === '63') return;
+                let val = fields[tag];
+                let len = val.length.toString().padStart(2, '0');
+                str += tag + len + val;
+            });
+            return str;
+        }
+
+        function crc16_ccitt(str) {
+            let crc = 0xFFFF;
+            for (let i = 0; i < str.length; i++) {
+                let byte = str.charCodeAt(i);
+                crc ^= (byte << 8);
+                for (let j = 0; j < 8; j++) {
+                    if ((crc & 0x8000) !== 0) {
+                        crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
+                    } else {
+                        crc = (crc << 1) & 0xFFFF;
+                    }
+                }
+            }
+            return crc.toString(16).toUpperCase().padStart(4, '0');
+        }
+
         function renderInboundHistory() {
             const productId = parseInt(document.getElementById('stock-inbound-product-id').value);
             const container = document.getElementById('inbound-history-list');
@@ -1849,6 +1898,68 @@
                 content.classList.remove('translate-y-0');
                 content.classList.add('translate-y-full');
             }
+        }
+
+        // បង្ហាញកូដ QR ពិតប្រាកដ ឬបំប្លែងពី EMVCo String ស្វ័យប្រវត្តិ
+        function getKHQRImageHTML(amount) {
+            let qrData = (config.khqrLink || '').trim().replace(/\s/g, '');
+            if (!qrData) {
+                // ប្រសិនបើទទេ៖ បង្ហាញ Mockup ស្អាត
+                return `
+                    <div class="w-full h-full bg-slate-900 flex flex-col items-center justify-center text-white text-[9px] text-center font-mono leading-relaxed rounded-xl p-2">
+                        <span class="text-2xl">📲</span>
+                        <span class="font-bold text-emerald-400">HEANG KIMHAY SHOP</span>
+                        <p class="text-[8px] text-gray-400 mt-1">សូមផាសលេខកូដ KHQR ក្នុង Settings ដើម្បីបង្ហាញ QR ពិត</p>
+                        <span class="bg-primary/20 text-primary border border-primary/30 px-2 py-0.5 rounded font-black mt-2 text-xs">$${amount.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+
+            // ពិនិត្យមើលថាតើជា EMVCo / KHQR String មែនទេ (ផ្ដើមដោយ 000201)
+            if (qrData.startsWith('000201')) {
+                try {
+                    let fields = parseEMVCo(qrData);
+                    // ប្ដូរ Point of Initiation Method ទៅជា Dynamic (12)
+                    fields['01'] = '12';
+                    // ដាក់តម្លៃលុយត្រូវទូទាត់ (Tag 54)
+                    fields['54'] = amount.toFixed(2);
+                    
+                    // បង្កើតកូដ EMVCo ថ្មី
+                    let emvcoStr = generateEMVCo(fields);
+                    // បន្ថែម Tag 63 (CRC) header
+                    emvcoStr += "6304";
+                    // គណនា CRC16 ថ្មីឱ្យត្រូវតម្លៃទឹកប្រាក់
+                    let crcVal = crc16_ccitt(emvcoStr);
+                    let finalKHQR = emvcoStr + crcVal;
+
+                    // បង្កើត QR Code ពីរូបភាព API
+                    let imageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(finalKHQR)}`;
+                    return `<img src="${imageUrl}" alt="Dynamic KHQR" class="w-full h-full object-contain rounded-xl">`;
+                } catch (e) {
+                    console.error("Error parsing EMVCo: ", e);
+                    // ប្រសិនបើមានកំហុស៖ បង្ហាញជា QR code ធម្មតា
+                    let imageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrData)}`;
+                    return `<img src="${imageUrl}" alt="KHQR Link" class="w-full h-full object-contain rounded-xl">`;
+                }
+            }
+
+            // ប្រសិនបើជា Bakong Checkout Link ធម្មតា
+            let finalLink = qrData;
+            if (finalLink.startsWith('http') && finalLink.includes('bakong.org.kh')) {
+                if (finalLink.includes('?')) {
+                    finalLink = finalLink.replace(/([\?&])amount=[^&]*/, '');
+                    finalLink += `&amount=${amount.toFixed(2)}`;
+                } else {
+                    finalLink += `?amount=${amount.toFixed(2)}`;
+                }
+            }
+
+            let imageUrl = finalLink;
+            if (finalLink.startsWith('http') && !finalLink.match(/\.(jpeg|jpg|gif|png|webp|svg)/i)) {
+                imageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(finalLink)}`;
+            }
+
+            return `<img src="${imageUrl}" alt="KHQR" class="w-full h-full object-contain rounded-xl" onerror="this.onerror=null; this.src='https://placehold.co/150x150/0f172a/ffffff?text=QR+Error';">`;
         }
 
         function renderCartItems() {
@@ -2161,46 +2272,6 @@
             `;
         }
 
-        // ជំនួយការ៖ បំប្លែង Link KHQR ឬ Bakong deep link ឱ្យទៅជាកូដ QR រូបភាពពិតប្រាកដ
-        function getKHQRImageHTML(amount) {
-            let qrData = config.khqrLink || '';
-            if (!qrData) {
-                // ប្រសិនបើទទេ៖ បង្ហាញ Mockup ដូចមុន
-                return `
-                    <div class="w-full h-full bg-slate-900 flex flex-col items-center justify-center text-white text-[8px] text-center font-mono leading-relaxed rounded-xl p-2">
-                        <span class="text-lg">📲</span>
-                        <span class="font-bold">HEANG KIMHAY</span>
-                        <span class="text-primary font-black mt-1">$${amount.toFixed(2)}</span>
-                    </div>
-                `;
-            }
-            
-            // ដំណើរការបញ្ចូលតម្លៃត្រូវបង់ទៅក្នុងលីងទូទាត់ (Dynamic Amount Injection)
-            let finalLink = qrData;
-            
-            // ប្រសិនបើជា Bakong Checkout Link យើងបន្ថែម parameter amount ស្វ័យប្រវត្តទៅក្នុង Link
-            if (finalLink.startsWith('http') && finalLink.includes('bakong.org.kh')) {
-                // ប្រសិនបើលីងមានស្រាប់ parameter រួចហើយ យើងប្រើ & តែបើគ្មានទេ យើងប្រើ ?
-                if (finalLink.includes('?')) {
-                    // លុប parameter amount ចាស់ចេញ បើមាន
-                    finalLink = finalLink.replace(/([\?&])amount=[^&]*/, '');
-                    finalLink += `&amount=${amount.toFixed(2)}`;
-                } else {
-                    finalLink += `?amount=${amount.toFixed(2)}`;
-                }
-            }
-            
-            let imageUrl = finalLink;
-            // ប្រសិនបើជាលីងទូទៅ (ដូចជា Bakong Link) មិនមែនជាលីងរូបភាព (png, jpg) ទេ នោះយើងបំប្លែងវាទៅជា QR code តាម QR API
-            if (finalLink.startsWith('http') && !finalLink.match(/\.(jpeg|jpg|gif|png|webp|svg)/i)) {
-                imageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(finalLink)}`;
-            }
-            
-            return `
-                <img src="${imageUrl}" alt="KHQR" class="w-full h-full object-contain rounded-xl" onerror="this.onerror=null; this.src='https://placehold.co/150x150/0f172a/ffffff?text=QR+Error';">
-            `;
-        }
-
         // ១២. ផ្ទាំងទូទាត់ប្រាក់ទ្វេររូបិយប័ណ្ណ (Multi-Currency Checkout Logic)
         function openPaymentSelectorModal() {
             toggleDraftInvoiceModal(false);
@@ -2221,7 +2292,7 @@
             document.getElementById('pay-total-usd').innerText = `$${finalUsd.toFixed(2)}`;
             document.getElementById('pay-total-khr').innerText = `${finalKhr.toLocaleString()} ៛`;
             
-            // បង្ហាញ QR Code តាមលីងដែលបានកំណត់ក្នុង Setting
+            // បង្ហាញ QR Code តាមលីង ឬ EMVCo KHQR String ដែលបានកំណត់ក្នុង Setting
             document.getElementById('khqr-container-box').innerHTML = getKHQRImageHTML(finalUsd);
 
             selectedPaymentMethod = "Cash";
@@ -3080,7 +3151,14 @@
                 } else {
                     document.getElementById('pos-search').value = barcode;
                     filterProducts();
-                    showToast("រកមិនឃើញទំនិញដែលត្រូវនឹងបាកូដនេះទេ!", "⚠️");
+                    // ប្រព័ន្ធស្វ័យប្រវត្តសួរចុះឈ្មោះទំនិញថ្មីភ្លាមៗ បើរកមិនឃើញក្នុងប្រព័ន្ធ
+                    showConfirm(
+                        "មិនស្គាល់ទំនិញនេះទេ",
+                        `លេខកូដបាកូដ "${barcode}" មិនទាន់មានក្នុងប្រព័ន្ធឡើយ។ តើបងចង់បន្ថែមវាជាទំនិញថ្មីឥឡូវនេះទេ?`,
+                        function() {
+                            openNewProductModalWithBarcode(barcode);
+                        }
+                    );
                 }
             } else if (activeScannerTab === 'stock') {
                 document.getElementById('stock-search').value = barcode;
@@ -3090,9 +3168,26 @@
                 if (product) {
                     showToast(`បានរកឃើញទំនិញក្នុងស្តុក៖ ${product.name}`, "📦");
                 } else {
-                    showToast("រកមិនឃើញទំនិញដែលត្រូវនឹងបាកូដនេះទេ!", "⚠️");
+                    // ប្រព័ន្ធស្វ័យប្រវត្តសួរចុះឈ្មោះទំនិញថ្មីភ្លាមៗ បើរកមិនឃើញក្នុងប្រព័ន្ធ
+                    showConfirm(
+                        "មិនទាន់មានក្នុងស្តុកទេ",
+                        `លេខកូដបាកូដ "${barcode}" មិនទាន់មានក្នុងស្តុកឡើយ។ តើបងចង់ចុះឈ្មោះបង្កើតទំនិញថ្មីនេះទេ?`,
+                        function() {
+                            openNewProductModalWithBarcode(barcode);
+                        }
+                    );
                 }
             }
+        }
+
+        // មុខងារជំនួយបំពេញបាកូដស្វ័យប្រវត្តទៅក្នុងទម្រង់បង្កើតផលិតផលថ្មី
+        function openNewProductModalWithBarcode(barcode) {
+            toggleNewProductModal(true);
+            document.getElementById('new-prod-barcode').value = barcode;
+            // បង្កើតលេខកូដ SKU ស្វ័យប្រវត្តដោយផ្អែកលើចុងបាកូដ និងលេខរ៉េនដឹម
+            const suffix = barcode.substring(Math.max(0, barcode.length - 4));
+            document.getElementById('new-prod-sku').value = `SKU-${suffix}-${Math.floor(Math.random() * 90 + 10)}`;
+            document.getElementById('new-prod-name').focus();
         }
     </script>
 </body>
