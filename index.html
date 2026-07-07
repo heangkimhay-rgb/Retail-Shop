@@ -275,7 +275,11 @@
                     <div>
                         <label class="text-gray-400 font-medium">Link KHQR (លីងរូបភាព ឬ Link ទូទាត់បាគង)៖</label>
                         <input type="text" id="set-khqr-link" class="w-full p-2 border border-gray-200 rounded-lg outline-none focus:border-primary mt-1 text-blue-600 font-mono text-[11px]" placeholder="ផាសលីងរូបភាព QR ឬ លីងបង់ប្រាក់បាគងនៅទីនេះ...">
-                        <p class="text-[9px] text-gray-400 mt-1">បងអាចដាក់លីងរូបភាព QR កូដ ឬ Bakong Pay Link ដើម្បីឱ្យអតិថិជនស្កែនទូទាត់ជាក់ស្តែងពេលលក់។</p>
+                        <div class="text-[9px] text-gray-400 mt-1 space-y-1 bg-slate-50 p-2 rounded-lg border border-gray-100">
+                            <p class="font-bold text-gray-500">💡 របៀបប្រើប្រាស់ឱ្យចេញតម្លៃលុយស្វ័យប្រវត្ត (Dynamic QR)៖</p>
+                            <p>• បើបងផាស <span class="text-emerald-600 font-bold">លីងរូបភាព QR ធម្មតា</span> ៖ ស្កែនទៅ <strong>មិនចេញតម្លៃទេ</strong> (ភ្ញៀវត្រូវវាយលុយខ្លួនឯង)។</p>
+                            <p>• បើបងប្រើ <span class="text-blue-600 font-bold">Bakong Link</span> (ឧទាហរណ៍៖ <code class="bg-gray-100 px-1 py-0.5 rounded text-red-500 font-mono">https://payment.bakong.org.kh/checkout/xxxxxx</code>) ៖ ប្រព័ន្ធនឹង <strong>បញ្ចូលតម្លៃត្រូវបង់ទៅក្នុង QR ស្វ័យប្រវត្ត</strong> ភ្លាមៗពេលភ្ញៀវស្កែន!</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2171,10 +2175,25 @@
                 `;
             }
             
-            let imageUrl = qrData;
+            // ដំណើរការបញ្ចូលតម្លៃត្រូវបង់ទៅក្នុងលីងទូទាត់ (Dynamic Amount Injection)
+            let finalLink = qrData;
+            
+            // ប្រសិនបើជា Bakong Checkout Link យើងបន្ថែម parameter amount ស្វ័យប្រវត្តទៅក្នុង Link
+            if (finalLink.startsWith('http') && finalLink.includes('bakong.org.kh')) {
+                // ប្រសិនបើលីងមានស្រាប់ parameter រួចហើយ យើងប្រើ & តែបើគ្មានទេ យើងប្រើ ?
+                if (finalLink.includes('?')) {
+                    // លុប parameter amount ចាស់ចេញ បើមាន
+                    finalLink = finalLink.replace(/([\?&])amount=[^&]*/, '');
+                    finalLink += `&amount=${amount.toFixed(2)}`;
+                } else {
+                    finalLink += `?amount=${amount.toFixed(2)}`;
+                }
+            }
+            
+            let imageUrl = finalLink;
             // ប្រសិនបើជាលីងទូទៅ (ដូចជា Bakong Link) មិនមែនជាលីងរូបភាព (png, jpg) ទេ នោះយើងបំប្លែងវាទៅជា QR code តាម QR API
-            if (qrData.startsWith('http') && !qrData.match(/\.(jpeg|jpg|gif|png|webp|svg)/i)) {
-                imageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrData)}`;
+            if (finalLink.startsWith('http') && !finalLink.match(/\.(jpeg|jpg|gif|png|webp|svg)/i)) {
+                imageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(finalLink)}`;
             }
             
             return `
