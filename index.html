@@ -166,9 +166,24 @@
 
         <!-- ------------------- ទំព័រទី ៣៖ របាយការណ៍ (TAB: reports) ------------------- -->
         <div id="view-reports" class="app-view p-3 space-y-4 hidden">
-            <h2 class="text-base font-bold text-secondary">របាយការណ៍លក់ថ្ងៃនេះ</h2>
+            <h2 class="text-base font-bold text-secondary">របាយការណ៍លក់លម្អិត</h2>
+
+            <!-- ប្រអប់ចម្រោះកាលបរិច្ឆេទសម្រាប់ Dashboard (Live Filter Setup) -->
+            <div class="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-sm space-y-2">
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">📅 ជ្រើសរើសកាលបរិច្ឆេទបង្ហាញ៖</p>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                        <label class="block text-gray-500 font-medium mb-1">ចាប់ពីថ្ងៃ៖</label>
+                        <input type="date" id="dashboard-start-date" onchange="renderReports()" class="w-full p-2 border border-gray-200 rounded-lg outline-none focus:border-primary font-semibold text-gray-700">
+                    </div>
+                    <div>
+                        <label class="block text-gray-500 font-medium mb-1">ដល់ថ្ងៃ៖</label>
+                        <input type="date" id="dashboard-end-date" onchange="renderReports()" class="w-full p-2 border border-gray-200 rounded-lg outline-none focus:border-primary font-semibold text-gray-700">
+                    </div>
+                </div>
+            </div>
             
-            <!-- កាតសង្ខេបចំណូល -->
+            <!-- កាតសង្ខេបចំណូល (ចម្រោះតាមកាលបរិច្ឆេទ) -->
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-3.5 rounded-2xl shadow-sm">
                     <p class="text-[10px] text-emerald-100 uppercase font-semibold">លក់បានសរុប</p>
@@ -645,7 +660,7 @@
                 <div id="inbound-subview-history" class="space-y-2.5 hidden">
                     <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">បញ្ជីប្រតិបត្តិការស្តុកកន្លងមក៖</p>
                     <div class="space-y-2" id="inbound-history-list">
-                        <!-- ចាក់ប្រវត្តិស្តុក IN/ADJ ដោយ JS -->
+                        <!-- ប្រវត្តិស្តុក IN/ADJ ដោយ JS -->
                     </div>
                 </div>
 
@@ -946,16 +961,16 @@
             { id: 1, barcode: '884001234567', sku: 'BEV-COCA-01', name: 'កូកាកូឡា កំប៉ុង (330ml)', categoryId: '1', cost: 0.35, price: 0.50, stock: 120, lowLimit: 20, emoji: '🥤' },
             { id: 2, barcode: '884001234568', sku: 'BEV-WATER-01', name: 'ទឹកបរិសុទ្ធ វីតាល់ (500ml)', categoryId: '1', cost: 0.15, price: 0.25, stock: 240, lowLimit: 30, emoji: '💧' },
             { id: 3, barcode: '885002468101', sku: 'GRO-RICE-01', name: 'អង្ករផ្កាម្លិះ (5kg)', categoryId: '2', cost: 4.50, price: 6.00, stock: 15, lowLimit: 5, emoji: '🌾' },
-            { id: 4, barcode: '885002468102', sku: 'GRO-NOODLE-01', name: 'មីម៉ាម៉ា សាច់ជ្រូកចិញ្រ្ចាំ (កេស)', categoryId: '2', cost: 3.80, price: 4.80, stock: 4, lowLimit: 5, emoji: '🍜' },
+            { id: 4, barcode: '885002468102', sku: 'GRO-NOODLE-01', name: 'មីម៉ាម៉ا សាច់ជ្រូកចិញ្រ្ចាំ (កេស)', categoryId: '2', cost: 3.80, price: 4.80, stock: 4, lowLimit: 5, emoji: '🍜' },
             { id: 5, barcode: '886003579123', sku: 'HOU-SOAP-01', name: 'សាប៊ូដុសខ្លួន Lux (85g)', categoryId: '3', cost: 0.45, price: 0.70, stock: 50, lowLimit: 10, emoji: '🧼' },
-            // បន្ថែមផលិតផលថ្មីស្របតាមរូបភាព Colgate image_151511.jpg របស់បង
             { id: 6, barcode: '8901057335782', sku: 'DEN-COLG-01', name: 'ថ្នាំដុសធ្មេញ Colgate (150g)', categoryId: '3', cost: 0.85, price: 1.20, stock: 85, lowLimit: 10, emoji: '🪥' }
         ];
 
+        // ប្រើប្រាស់កាលបរិច្ឆេទ ISO Standard ផ្លូវការ (YYYY-MM-DD HH:mm:ss) សម្រាប់ទិន្នន័យគំរូ
         let stockTransactions = [
-            { id: 1, productId: 1, type: 'IN', qty: 120, cost: 0.35, date: '2026-07-01 10:00', supplier: 'ក្រុមហ៊ុន Coca-Cola', active: true },
-            { id: 2, productId: 3, type: 'IN', qty: 15, cost: 4.50, date: '2026-07-03 14:30', supplier: 'ក្រុមហ៊ុន អង្ករផ្កាម្លិះ', active: true },
-            { id: 3, productId: 6, type: 'IN', qty: 85, cost: 0.85, date: '2026-07-05 09:15', supplier: 'ដេប៉ូ Colgate ភ្នំពេញ', active: true }
+            { id: 1, productId: 1, type: 'IN', qty: 120, cost: 0.35, date: '2026-07-01 10:00:00', supplier: 'ក្រុមហ៊ុន Coca-Cola', active: true },
+            { id: 2, productId: 3, type: 'IN', qty: 15, cost: 4.50, date: '2026-07-03 14:30:00', supplier: 'ក្រុមហ៊ុន អង្ករផ្កាម្លិះ', active: true },
+            { id: 3, productId: 6, type: 'IN', qty: 85, cost: 0.85, date: '2026-07-08 09:15:00', supplier: 'ដេប៉ូ Colgate ភ្នំពេញ', active: true }
         ];
 
         let customers = [
@@ -963,9 +978,10 @@
             { id: 2, name: 'ម៉ៅ សុភ័ក្ត្រ', phone: '016445566', points: 45 }
         ];
 
+        // ថ្ងៃលក់គំរូជា YYYY-MM-DD HH:mm:ss (ថ្ងៃទី ៨ កក្កដា ឆ្នាំ ២០២៦ គឺជាថ្ងៃនេះ)
         let salesHistory = [
-            { id: 1001, date: '2026-07-05 11:30', finalAmount: 8.00, cost: 5.70, itemsCount: 7, method: 'KHQR' },
-            { id: 1002, date: '2026-07-05 13:15', finalAmount: 1.45, cost: 0.90, itemsCount: 4, method: 'Cash' }
+            { id: 1001, date: '2026-07-05 11:30:00', finalAmount: 8.00, cost: 5.70, itemsCount: 7, method: 'KHQR' },
+            { id: 1002, date: '2026-07-08 13:15:00', finalAmount: 1.45, cost: 0.90, itemsCount: 4, method: 'Cash' }
         ];
 
         // រដ្ឋទូទៅនៃប្រព័ន្ធ (App state variables)
@@ -978,12 +994,34 @@
 
         // ប្រព័ន្ធការពារសុវត្ថិភាពចាក់សោរ (Lock System Variables)
         let isSystemLocked = false;
-        let pendingTabTarget = 'pos'; // Tab user wants to go
+        let pendingTabTarget = 'pos'; 
         let enteredPin = "";
 
         // បណ្ណាល័យស្កែនបាកូដ (Camera Scanning Variables)
         let html5QrcodeScanner = null;
-        let activeScannerTab = 'pos'; // 'pos' or 'stock'
+        let activeScannerTab = 'pos'; 
+
+        // មុខងារជំនួយបង្កើតកាលបរិច្ឆេទ ISO ផ្លូវការ (ISO Date helper YYYY-MM-DD HH:mm:ss)
+        function getNowISOString() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+
+        // មុខងារជំនួយបំប្លែងកាលបរិច្ឆេទ ISO ទៅជាភាសាខ្មែរស្រស់ស្អាត (DD/MM/YYYY HH:mm)
+        function formatKhmerDate(isoStr) {
+            if (!isoStr) return '';
+            const parts = isoStr.split(' ');
+            const dateParts = parts[0].split('-');
+            if (dateParts.length !== 3) return isoStr; // Fallback
+            const timePart = parts[1] ? parts[1].substring(0, 5) : '';
+            return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]} ${timePart}`;
+        }
 
         // ២. ដំណើរការដំបូងពេលបើកកម្មវិធី (Initialize App)
         window.onload = function() {
@@ -994,13 +1032,17 @@
             renderStockProducts();
             renderCustomersList();
             updateCartBadge();
-            renderReports();
             populateCustomerSelect();
 
-            // កំណត់កាលបរិច្ឆេទលំនាំដើមក្នុងប្រអប់របាយការណ៍ (ថ្ងៃនេះ)
-            const todayStr = new Date().toISOString().split('T')[0];
+            // កំណត់កាលបរិច្ឆេទលំនាំដើម (ថ្ងៃនេះ) ទៅក្នុងគ្រប់ផ្ទាំងចម្រោះ
+            const todayStr = getNowISOString().split(' ')[0]; // "2026-07-08"
+            
+            document.getElementById('dashboard-start-date').value = todayStr;
+            document.getElementById('dashboard-end-date').value = todayStr;
             document.getElementById('report-start-date').value = todayStr;
             document.getElementById('report-end-date').value = todayStr;
+
+            renderReports();
         };
 
         // ទាញទិន្នន័យពី LocalStorage (ប្រសិនបើមាន)
@@ -1093,7 +1135,7 @@
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.type = "sine";
-                osc.frequency.value = 1100; // 1100Hz frequency
+                osc.frequency.value = 1100; 
                 gain.gain.setValueAtTime(0.12, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
                 osc.connect(gain);
@@ -1375,7 +1417,7 @@
             products.push(newProduct);
             
             if (stock > 0) {
-                const dateStr = new Date().toLocaleString('km-KH', { hour12: false }).replace(',', '');
+                const dateStr = getNowISOString();
                 stockTransactions.push({
                     id: stockTransactions.length + 1,
                     productId: newId,
@@ -1599,7 +1641,7 @@
             const p = products.find(prod => prod.id === productId);
             if (!p) return;
 
-            const dateStr = new Date().toLocaleString('km-KH', { hour12: false }).replace(',', '');
+            const dateStr = getNowISOString();
 
             if (currentInboundTab === 'form') {
                 const addQty = parseInt(document.getElementById('inbound-add-qty').value) || 0;
@@ -1675,7 +1717,6 @@
         function parseEMVCo(str) {
             let fields = {};
             let i = 0;
-            // លុប CRC ចាស់ចេញមុននឹងវិភាគ (ប្រសិនបើមាន Tag 63 នៅចុងក្រោយ)
             let cleanStr = str;
             if (str.includes("6304")) {
                 cleanStr = str.split("6304")[0];
@@ -1753,7 +1794,7 @@
                             <span class="text-[9px] font-bold px-1.5 py-0.5 rounded border ${badgeClass}">${typeText}</span>
                             <span class="font-extrabold text-xs">${sign}${t.qty}</span>
                         </div>
-                        <p class="text-[9px] text-gray-400 mt-1">កាលបរិច្ឆេទ៖ ${t.date}</p>
+                        <p class="text-[9px] text-gray-400 mt-1">កាលបរិច្ឆេទ៖ ${formatKhmerDate(t.date)}</p>
                         <p class="text-[9px] text-gray-500 font-medium">កំណត់ចំណាំ៖ ${t.supplier}</p>
                     </div>
                     <div class="text-right">
@@ -1782,7 +1823,6 @@
                 return;
             }
 
-            // ជំនួស confirm dialog ធម្មតាដោយ Custom Confirm Modal
             showConfirm(
                 'បោះបង់ប្រតិបត្តិការស្តុក',
                 `តើបងពិតជាចង់ "បោះបង់ (Void)" ប្រតិបត្តិការនេះមែនទេ? ចំនួនស្តុកទំនិញនឹងត្រូវប្តូរត្រលប់មកវិញដោយស្វ័យប្រវត្ត។`,
@@ -1904,7 +1944,6 @@
         function getKHQRImageHTML(amount) {
             let qrData = (config.khqrLink || '').trim().replace(/\s/g, '');
             if (!qrData) {
-                // ប្រសិនបើទទេ៖ បង្ហាញ Mockup ស្អាត
                 return `
                     <div class="w-full h-full bg-slate-900 flex flex-col items-center justify-center text-white text-[9px] text-center font-mono leading-relaxed rounded-xl p-2">
                         <span class="text-2xl">📲</span>
@@ -1915,35 +1954,26 @@
                 `;
             }
 
-            // ពិនិត្យមើលថាតើជា EMVCo / KHQR String មែនទេ (ផ្ដើមដោយ 000201)
             if (qrData.startsWith('000201')) {
                 try {
                     let fields = parseEMVCo(qrData);
-                    // ប្ដូរ Point of Initiation Method ទៅជា Dynamic (12)
                     fields['01'] = '12';
-                    // ដាក់តម្លៃលុយត្រូវទូទាត់ (Tag 54)
                     fields['54'] = amount.toFixed(2);
                     
-                    // បង្កើតកូដ EMVCo ថ្មី
                     let emvcoStr = generateEMVCo(fields);
-                    // បន្ថែម Tag 63 (CRC) header
                     emvcoStr += "6304";
-                    // គណនា CRC16 ថ្មីឱ្យត្រូវតម្លៃទឹកប្រាក់
                     let crcVal = crc16_ccitt(emvcoStr);
                     let finalKHQR = emvcoStr + crcVal;
 
-                    // បង្កើត QR Code ពីរូបភាព API
                     let imageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(finalKHQR)}`;
                     return `<img src="${imageUrl}" alt="Dynamic KHQR" class="w-full h-full object-contain rounded-xl">`;
                 } catch (e) {
                     console.error("Error parsing EMVCo: ", e);
-                    // ប្រសិនបើមានកំហុស៖ បង្ហាញជា QR code ធម្មតា
                     let imageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrData)}`;
                     return `<img src="${imageUrl}" alt="KHQR Link" class="w-full h-full object-contain rounded-xl">`;
                 }
             }
 
-            // ប្រសិនបើជា Bakong Checkout Link ធម្មតា
             let finalLink = qrData;
             if (finalLink.startsWith('http') && finalLink.includes('bakong.org.kh')) {
                 if (finalLink.includes('?')) {
@@ -2022,7 +2052,7 @@
             }
         }
 
-        // ប៊ូតុងថ្មី៖ សម្អាតទំនិញទាំងអស់ក្នុងកន្ត្រកចេញ (Clear Entire Cart)
+        // សម្អាតទំនិញទាំងអស់ក្នុងកន្ត្រកចេញ (Clear Entire Cart)
         function clearAllCart() {
             const keys = Object.keys(cart);
             if (keys.length === 0) {
@@ -2249,7 +2279,7 @@
                         <span>-$${discount.toFixed(2)}</span>
                     </div>
                     ` : ''}
-                    <div class="flex justify-between font-extrabold text-sm text-secondary pt-1 border-t border-gray-50">
+                    <div class="flex justify-between font-extrabold text-sm text-secondary pt-1 border-t border-gray-55">
                         <span>ត្រូវទូទាត់សរុប (USD)៖</span>
                         <span class="text-primary">$${finalAmount.toFixed(2)}</span>
                     </div>
@@ -2292,7 +2322,6 @@
             document.getElementById('pay-total-usd').innerText = `$${finalUsd.toFixed(2)}`;
             document.getElementById('pay-total-khr').innerText = `${finalKhr.toLocaleString()} ៛`;
             
-            // បង្ហាញ QR Code តាមលីង ឬ EMVCo KHQR String ដែលបានកំណត់ក្នុង Setting
             document.getElementById('khqr-container-box').innerHTML = getKHQRImageHTML(finalUsd);
 
             selectedPaymentMethod = "Cash";
@@ -2405,7 +2434,7 @@
             document.getElementById('change-khr').innerText = "0 ៛";
             
             const label = document.getElementById('cash-received-label');
-            label.innerText = (selectedCashCurrency === "USD") ? "ប្រាក់ទទួលបាន (USD $)៖" : "ប្រាក់ទទួលបាន (Riel ៛)៖";
+            label.innerText = (selectedCashCurrency === "USD") ? "ประាក់ได้รับ (USD $)៖" : "ประាក់ได้รับ (Riel ៛)៖";
 
             let subtotal = 0;
             Object.values(cart).forEach(item => { subtotal += (item.qty * item.product.price); });
@@ -2484,7 +2513,6 @@
                     realProduct.stock -= item.qty;
                 }
 
-                const rowTotal = item.qty * item.product.price;
                 const rowCost = item.qty * item.product.cost;
                 totalCost += rowCost;
                 totalItems += item.qty;
@@ -2505,7 +2533,7 @@
 
             const finalAmount = subtotal - discount;
             const newInvoiceId = 1000 + salesHistory.length + 1;
-            const dateStr = new Date().toLocaleString('km-KH', { hour12: false }).replace(',', '');
+            const dateStr = getNowISOString(); // រក្សាទុកជា YYYY-MM-DD HH:mm:ss
 
             const saleRecord = {
                 id: newInvoiceId,
@@ -2614,7 +2642,7 @@
                         <span>បុគ្គលិក៖ ${config.cashierName}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span>កាលបរិច្ឆេទ៖ ${dateStr}</span>
+                        <span>កាលបរិច្ឆេទ៖ ${formatKhmerDate(dateStr)}</span>
                         <span>វិធីទូទាត់៖ ${method === 'Cash' ? 'លុយសុទ្ធ' : method === 'KHQR' ? 'ស្កេន KHQR' : 'កាតធនាគារ'}</span>
                     </div>
                 </div>
@@ -2695,18 +2723,30 @@
             showToast("កំពុងភ្ជាប់ទៅម៉ាស៊ីនបោះពុម្ពវិក្កយបត្រ Bluetooth...", "🖨️");
         }
 
-        // ១៤. គណនា និងបង្ហាញទំព័ររបាយការណ៍ (Reports Dashboard Screen)
+        // ១៤. គណនា និងបង្ហាញទំព័ររបាយការណ៍ (Reports Live Dashboard View with accurate string YYYY-MM-DD comparisons)
         function renderReports() {
+            const startVal = document.getElementById('dashboard-start-date').value;
+            const endVal = document.getElementById('dashboard-end-date').value;
+
+            if (!startVal || !endVal) return;
+
             let totalSales = 0;
             let totalCost = 0;
-            let salesCount = salesHistory.length;
+            let salesCount = 0;
 
             let paymentMethods = { 'Cash': 0, 'KHQR': 0, 'Card': 0 };
 
             salesHistory.forEach(s => {
-                totalSales += s.finalAmount;
-                totalCost += s.cost;
-                paymentMethods[s.method] = (paymentMethods[s.method] || 0) + s.finalAmount;
+                // ទាញយកតែថ្ងៃខែពី ISO String "2026-07-08 21:10:05" -> "2026-07-08"
+                const txDateOnly = s.date.split(' ')[0]; 
+
+                // ប្រៀបធៀបអត្ថបទលំដាប់លំដោយកាលបរិច្ឆេទ YYYY-MM-DD ធានាការចម្រោះបានត្រឹមត្រូវ ១០០%
+                if (txDateOnly >= startVal && txDateOnly <= endVal) {
+                    totalSales += s.finalAmount;
+                    totalCost += s.cost;
+                    salesCount++;
+                    paymentMethods[s.method] = (paymentMethods[s.method] || 0) + s.finalAmount;
+                }
             });
 
             let profit = totalSales - totalCost;
@@ -2739,7 +2779,7 @@
             });
         }
 
-        // ១៥. ប្រព័ន្ធបង្កើត និងបោះពុម្ពសន្លឹករបាយការណ៍ផ្លូវការ
+        // ១៥. ប្រព័ន្ធបង្កើត និងបោះពុម្ពសន្លឹករបាយការណ៍ផ្លូវការ (Printed Report Paper Design)
         function generateReportSheet() {
             const reportType = document.getElementById('report-type-select').value;
             const startVal = document.getElementById('report-start-date').value;
@@ -2753,20 +2793,13 @@
             const sheet = document.getElementById('printable-report-sheet');
             let contentHtml = '';
 
-            const generatedDateStr = new Date().toLocaleString('km-KH', { hour12: false }).replace(',', '');
+            const generatedDateStr = formatKhmerDate(getNowISOString());
 
             if (reportType === 'sales') {
-                const start = new Date(startVal);
-                start.setHours(0,0,0,0);
-                const end = new Date(endVal);
-                end.setHours(23,59,59,999);
-
+                // ចម្រោះយកតែការលក់ដែលស្ថិតក្នុងចន្លោះកាលបរិច្ឆេទដែលបានកំណត់
                 const filteredHistory = salesHistory.filter(s => {
-                    const dateParts = s.date.split(' ');
-                    const dateSegments = dateParts[0].split('-');
-                    const timeSegments = dateParts[1].split(':');
-                    const itemDate = new Date(dateSegments[0], dateSegments[1] - 1, dateSegments[2], timeSegments[0], timeSegments[1]);
-                    return itemDate >= start && itemDate <= end;
+                    const txDateOnly = s.date.split(' ')[0]; // "YYYY-MM-DD"
+                    return txDateOnly >= startVal && txDateOnly <= endVal;
                 });
 
                 let totalSales = 0;
@@ -2781,7 +2814,7 @@
                     rowsHtml += `
                         <tr class="border-b border-gray-100 text-xs">
                             <td class="py-2 text-center">${idx + 1}</td>
-                            <td class="py-2 text-center">${s.date}</td>
+                            <td class="py-2 text-center">${formatKhmerDate(s.date)}</td>
                             <td class="py-2 text-center">#${s.id}</td>
                             <td class="py-2 text-center">${s.itemsCount}</td>
                             <td class="py-2 text-center">${s.method === 'Cash' ? 'លុយសុទ្ធ' : s.method}</td>
@@ -2803,7 +2836,7 @@
                         </div>
                         <div class="text-right">
                             <h2 class="text-base font-bold text-secondary uppercase">សន្លឹករបាយការណ៍លក់រួម</h2>
-                            <p class="text-xs text-gray-500">ចាប់ពី៖ ${startVal} ដល់៖ ${endVal}</p>
+                            <p class="text-xs text-gray-500">ចាប់ពី៖ ${formatKhmerDate(startVal + ' 00:00:00').split(' ')[0]} ដល់៖ ${formatKhmerDate(endVal + ' 00:00:00').split(' ')[0]}</p>
                             <p class="text-xs text-gray-500">កាលបរិច្ឆេទបង្កើត៖ ${generatedDateStr}</p>
                         </div>
                     </div>
@@ -3049,7 +3082,6 @@
                             updateScannerStatus("ប្រើប្រាស់កាមេរ៉ាលំនាំដើម", "bg-yellow-500");
                         }
 
-                        // កំណត់ប្រភេទបាកូដទាំងអស់ដែលត្រូវស្កែន (1D Barcodes ដ៏សំខាន់សម្រាប់ទំនិញ)
                         const formatsToSupport = [
                             Html5QrcodeSupportedFormats.EAN_13,
                             Html5QrcodeSupportedFormats.EAN_8,
@@ -3070,7 +3102,6 @@
                             {
                                 fps: 15,
                                 qrbox: (width, height) => {
-                                    // រចនាប្រអប់ស្កែនឱ្យសមស្របនឹងបាកូដផលិតផលឆ្នូតៗវែងៗ (រាងទទឹងផ្តេក)
                                     return { width: Math.floor(width * 0.85), height: Math.floor(height * 0.4) };
                                 },
                                 experimentalFeatures: {
@@ -3078,13 +3109,11 @@
                                 }
                             },
                             (decodedText, decodedResult) => {
-                                // ស្កែនត្រូវបាកូដ! ដំណើរការសំឡេង និងទិន្នន័យ
                                 playBeepSound();
                                 handleDecodedBarcode(decodedText);
                                 stopBarcodeScanner();
                             },
                             (errorMessage) => {
-                                // កំពុងស្កែន... (Ignore frames that don't have barcode)
                                 updateScannerStatus("កំពុងរង់ចាំបាកូដ...", "bg-emerald-500");
                             }
                         ).catch(err => {
@@ -3151,7 +3180,6 @@
                 } else {
                     document.getElementById('pos-search').value = barcode;
                     filterProducts();
-                    // ប្រព័ន្ធស្វ័យប្រវត្តសួរចុះឈ្មោះទំនិញថ្មីភ្លាមៗ បើរកមិនឃើញក្នុងប្រព័ន្ធ
                     showConfirm(
                         "មិនស្គាល់ទំនិញនេះទេ",
                         `លេខកូដបាកូដ "${barcode}" មិនទាន់មានក្នុងប្រព័ន្ធឡើយ។ តើបងចង់បន្ថែមវាជាទំនិញថ្មីឥឡូវនេះទេ?`,
@@ -3168,7 +3196,6 @@
                 if (product) {
                     showToast(`បានរកឃើញទំនិញក្នុងស្តុក៖ ${product.name}`, "📦");
                 } else {
-                    // ប្រព័ន្ធស្វ័យប្រវត្តសួរចុះឈ្មោះទំនិញថ្មីភ្លាមៗ បើរកមិនឃើញក្នុងប្រព័ន្ធ
                     showConfirm(
                         "មិនទាន់មានក្នុងស្តុកទេ",
                         `លេខកូដបាកូដ "${barcode}" មិនទាន់មានក្នុងស្តុកឡើយ។ តើបងចង់ចុះឈ្មោះបង្កើតទំនិញថ្មីនេះទេ?`,
@@ -3180,11 +3207,9 @@
             }
         }
 
-        // មុខងារជំនួយបំពេញបាកូដស្វ័យប្រវត្តទៅក្នុងទម្រង់បង្កើតផលិតផលថ្មី
         function openNewProductModalWithBarcode(barcode) {
             toggleNewProductModal(true);
             document.getElementById('new-prod-barcode').value = barcode;
-            // បង្កើតលេខកូដ SKU ស្វ័យប្រវត្តដោយផ្អែកលើចុងបាកូដ និងលេខរ៉េនដឹម
             const suffix = barcode.substring(Math.max(0, barcode.length - 4));
             document.getElementById('new-prod-sku').value = `SKU-${suffix}-${Math.floor(Math.random() * 90 + 10)}`;
             document.getElementById('new-prod-name').focus();
